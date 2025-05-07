@@ -67,7 +67,7 @@ open index.html  # or double-click the file
 
 ## 📜 License
 
-This project is licensed under the **MIT License**.  
+This project is licensed under the [**GPL-3.0 license**](https://github.com/banyapon/OneFileMonopolyGame/tree/main?tab=GPL-3.0-1-ov-file#readme). 
 Feel free to **fork**, **remix**, or **build upon it** — just give credit where it's due.
 
 ---
