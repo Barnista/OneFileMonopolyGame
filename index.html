@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมเศรษฐี HTML5 JS (4 ผู้เล่น)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&family=Noto+Sans+JP:wght@100..900&family=Noto+Sans+SC:wght@100..900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans Thai', 'Noto Sans JP', 'Noto Sans SC', sans-serif;
+            background-color: #f0f9ff; /* Light blue background */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; /* Align to top */
+            min-height: 100vh;
+            padding: 1rem;
+            overflow-x: hidden; /* Prevent horizontal scroll on small screens */
+        }
+        .board-container {
+            display: grid;
+            grid-template-columns: auto repeat(9, auto) auto; /* 11 columns */
+            grid-template-rows: auto repeat(9, auto) auto;    /* 11 rows */
+            width: 90vw; /* Responsive width */
+            max-width: 700px; /* Max width for the board */
+            height: 90vw; /* Responsive height */
+            max-height: 700px; /* Max height for the board */
+            border: 2px solid #0c4a6e; /* Darker blue border */
+            position: relative;
+            background-color: #e0f2fe; /* Lighter blue board background */
+            border-radius: 0.5rem;
+            margin-top: 1rem; /* Added margin */
+        }
+        .cell {
+            border: 1px solid #7dd3fc; /* Light blue cell border */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 0.6rem;
+            padding: 2px;
+            position: relative;
+            overflow: hidden;
+            background-color: #f8fafc;
+        }
+        .cell .name {
+            font-weight: 500;
+            font-size: clamp(0.45rem, 1.3vw, 0.7rem); /* Slightly smaller for more languages */
+            word-break: break-word;
+            line-height: 1.2;
+        }
+        .cell .price {
+            font-size: clamp(0.4rem, 1.2vw, 0.6rem);
+            color: #047857;
+        }
+        .corner {
+            font-weight: bold;
+        }
+        .property-color {
+            height: 10px;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .player-token {
+            width: clamp(10px, 2.5vw, 20px);
+            height: clamp(10px, 2.5vw, 20px);
+            border-radius: 50%;
+            position: absolute;
+            transition: all 0.5s ease-in-out;
+            border: 1px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(6px, 1.5vw, 10px);
+            font-weight: bold;
+            color: white;
+            z-index: 10;
+        }
+        .player-1 { background-color: #ef4444; }
+        .player-2 { background-color: #3b82f6; }
+        .player-3 { background-color: #10b981; }
+        .player-4 { background-color: #f59e0b; }
+
+        /* Cell positioning - remains the same */
+        .cell[data-id="0"] { grid-column: 11 / 12; grid-row: 11 / 12; } /* Go */
+        .cell[data-id="1"] { grid-column: 10 / 11; grid-row: 11 / 12; }
+        .cell[data-id="2"] { grid-column: 9 / 10; grid-row: 11 / 12; }
+        .cell[data-id="3"] { grid-column: 8 / 9; grid-row: 11 / 12; }
+        .cell[data-id="4"] { grid-column: 7 / 8; grid-row: 11 / 12; }
+        .cell[data-id="5"] { grid-column: 6 / 7; grid-row: 11 / 12; }
+        .cell[data-id="6"] { grid-column: 5 / 6; grid-row: 11 / 12; }
+        .cell[data-id="7"] { grid-column: 4 / 5; grid-row: 11 / 12; }
+        .cell[data-id="8"] { grid-column: 3 / 4; grid-row: 11 / 12; }
+        .cell[data-id="9"] { grid-column: 2 / 3; grid-row: 11 / 12; }
+        .cell[data-id="10"] { grid-column: 1 / 2; grid-row: 11 / 12; } /* Jail */
+        .cell[data-id="11"] { grid-column: 1 / 2; grid-row: 10 / 11; }
+        .cell[data-id="12"] { grid-column: 1 / 2; grid-row: 9 / 10; }
+        .cell[data-id="13"] { grid-column: 1 / 2; grid-row: 8 / 9; }
+        .cell[data-id="14"] { grid-column: 1 / 2; grid-row: 7 / 8; }
+        .cell[data-id="15"] { grid-column: 1 / 2; grid-row: 6 / 7; }
+        .cell[data-id="16"] { grid-column: 1 / 2; grid-row: 5 / 6; }
+        .cell[data-id="17"] { grid-column: 1 / 2; grid-row: 4 / 5; }
+        .cell[data-id="18"] { grid-column: 1 / 2; grid-row: 3 / 4; }
+        .cell[data-id="19"] { grid-column: 1 / 2; grid-row: 2 / 3; }
+        .cell[data-id="20"] { grid-column: 1 / 2; grid-row: 1 / 2; } /* Free Parking */
+        .cell[data-id="21"] { grid-column: 2 / 3; grid-row: 1 / 2; }
+        .cell[data-id="22"] { grid-column: 3 / 4; grid-row: 1 / 2; }
+        .cell[data-id="23"] { grid-column: 4 / 5; grid-row: 1 / 2; }
+        .cell[data-id="24"] { grid-column: 5 / 6; grid-row: 1 / 2; }
+        .cell[data-id="25"] { grid-column: 6 / 7; grid-row: 1 / 2; }
+        .cell[data-id="26"] { grid-column: 7 / 8; grid-row: 1 / 2; }
+        .cell[data-id="27"] { grid-column: 8 / 9; grid-row: 1 / 2; }
+        .cell[data-id="28"] { grid-column: 9 / 10; grid-row: 1 / 2; }
+        .cell[data-id="29"] { grid-column: 10 / 11; grid-row: 1 / 2; }
+        .cell[data-id="30"] { grid-column: 11 / 12; grid-row: 1 / 2; } /* Go To Jail */
+        .cell[data-id="31"] { grid-column: 11 / 12; grid-row: 2 / 3; }
+        .cell[data-id="32"] { grid-column: 11 / 12; grid-row: 3 / 4; }
+        .cell[data-id="33"] { grid-column: 11 / 12; grid-row: 4 / 5; }
+        .cell[data-id="34"] { grid-column: 11 / 12; grid-row: 5 / 6; }
+        .cell[data-id="35"] { grid-column: 11 / 12; grid-row: 6 / 7; }
+        .cell[data-id="36"] { grid-column: 11 / 12; grid-row: 7 / 8; }
+        .cell[data-id="37"] { grid-column: 11 / 12; grid-row: 8 / 9; }
+        .cell[data-id="38"] { grid-column: 11 / 12; grid-row: 9 / 10; }
+        .cell[data-id="39"] { grid-column: 11 / 12; grid-row: 10 / 11; }
+
+        .center-area {
+            grid-column: 2 / 11;
+            grid-row: 2 / 11;
+            background-color: #bae6fd;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.25rem;
+            padding: 1rem;
+        }
+        .player-info-card {
+            background-color: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            margin-bottom: 1rem;
+            width: 100%;
+            max-width: 600px;
+        }
+        .player-info-card.active {
+            border: 2px solid #fbbf24;
+        }
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            z-index: 100;
+            text-align: center;
+            min-width: 300px;
+            max-width: 90%;
+        }
+        .message-box button {
+            margin-top: 1rem;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 99;
+        }
+        button {
+            background-color: #0284c7;
+            color: white;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #0369a1;
+        }
+        button:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+        .btn-buy { background-color: #16a34a; }
+        .btn-buy:hover { background-color: #15803d; }
+        .btn-pass { background-color: #dc2626; }
+        .btn-pass:hover { background-color: #b91c1c; }
+        .lang-button {
+            padding: 0.3rem 0.6rem;
+            font-size: 0.8rem;
+            margin: 0 0.2rem;
+            background-color: #60a5fa; /* Lighter blue for lang buttons */
+        }
+        .lang-button:hover {
+            background-color: #3b82f6;
+        }
+        .lang-button.active {
+            background-color: #1d4ed8; /* Darker blue for active lang */
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body class="bg-sky-100 flex flex-col items-center justify-start p-4 min-h-screen">
+
+    <div id="language-selector" class="mb-4 flex justify-center flex-wrap">
+        <button class="lang-button" data-lang="th">ไทย</button>
+        <button class="lang-button" data-lang="en">English</button>
+        <button class="lang-button" data-lang="jp">日本語</button>
+        <button class="lang-button" data-lang="cn">中文</button>
+    </div>
+
+    <h1 id="game-title" class="text-3xl font-bold text-sky-700 mb-6"></h1>
+
+    <div id="game-controls" class="w-full max-w-3xl mb-4 p-4 bg-white rounded-lg shadow-md">
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div id="player-turn-display" class="text-xl font-semibold text-sky-700">
+                <span id="player-turn-label-static"></span> <span id="current-player-name"></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <img id="dice1-img" src="https://placehold.co/40x40/cbd5e1/475569?text=?" alt="Dice 1" class="w-10 h-10 border border-slate-300 rounded">
+                <img id="dice2-img" src="https://placehold.co/40x40/cbd5e1/475569?text=?" alt="Dice 2" class="w-10 h-10 border border-slate-300 rounded">
+            </div>
+            <button id="roll-dice-button" class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-lg shadow transition duration-150 ease-in-out">
+            </button>
+        </div>
+        <div id="action-log" class="mt-3 text-sm text-slate-600 h-12 overflow-y-auto border p-2 rounded-md bg-slate-50">
+        </div>
+    </div>
+
+    <div id="player-info-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full max-w-5xl mb-4">
+    </div>
+
+    <div class="board-container shadow-xl" id="game-board">
+        <div class="center-area">
+            <h2 id="board-logo-text" class="text-2xl font-bold text-sky-800"></h2>
+            <img id="board-logo-image" src="https://placehold.co/100x100/0284c7/ffffff?text=MONOPOLY" alt="" class="my-4 rounded-lg">
+        </div>
+    </div>
+
+    <div id="player-tokens-container" class="absolute"></div>
+
+    <div id="message-box-overlay" class="overlay hidden"></div>
+    <div id="message-box" class="message-box hidden">
+        <h3 id="message-box-title" class="text-xl font-semibold mb-2"></h3>
+        <p id="message-box-text" class="mb-4"></p>
+        <div id="message-box-buttons" class="flex justify-center gap-2 flex-wrap">
+        </div>
+    </div>
+
+    <script>
+        // --- Game Configuration ---
+        const BOARD_SIZE = 40;
+        const JAIL_POSITION = 10;
+        const GO_TO_JAIL_POSITION = 30;
+        const PASS_GO_SALARY = 200;
+        const INITIAL_MONEY = 1500;
+        const PLAYER_COLORS = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b'];
+
+        // --- Game State ---
+        let players = [];
+        let boardSpaces = []; // Will store objects with 'id', 'type', 'price', 'rent', 'colorGroup', 'group', 'owner', 'houses', 'nameKey'
+        let currentPlayerIndex = 0;
+        let gameActive = true;
+        let diceRolledThisTurn = false;
+        let currentLanguage = 'th'; // Default language
+
+        // --- DOM Elements ---
+        const gameTitleElement = document.getElementById('game-title');
+        const playerTurnLabelStaticElement = document.getElementById('player-turn-label-static');
+        const currentPlayerNameDisplay = document.getElementById('current-player-name');
+        const rollDiceButton = document.getElementById('roll-dice-button');
+        const actionLogElement = document.getElementById('action-log');
+        const gameBoardElement = document.getElementById('game-board');
+        const playerTokensContainer = document.getElementById('player-tokens-container');
+        const dice1Img = document.getElementById('dice1-img');
+        const dice2Img = document.getElementById('dice2-img');
+        const playerInfoContainer = document.getElementById('player-info-container');
+        const messageBoxOverlay = document.getElementById('message-box-overlay');
+        const messageBox = document.getElementById('message-box');
+        const messageBoxTitle = document.getElementById('message-box-title');
+        const messageBoxText = document.getElementById('message-box-text');
+        const messageBoxButtons = document.getElementById('message-box-buttons');
+        const languageSelector = document.getElementById('language-selector');
+        // Changed from const to let to allow reassignment in renderBoard
+        let boardLogoTextElement = document.getElementById('board-logo-text');
+        let boardLogoImageElement = document.getElementById('board-logo-image');
+
+
+        // --- Internationalization (i18n) ---
+        const i18n = {
+            'th': {
+                'gameTitle': "เกมเศรษฐีหรรษา", 'rollDiceBtn': "ทอยลูกเต๋า", 'playerTurnLabel': "ตาผู้เล่น:",
+                'moneyLabel': "เงิน:", 'positionLabel': "ตำแหน่ง:", 'propertiesLabel': "ที่ดิน:",
+                'inJailLabel': "อยู่ในคุก", 'turnsLabel': "ตา", 'noPropertiesLabel': "ไม่มี",
+                'buyPropertyTitle': "ซื้อที่ดิน: {0}?", 'buyPropertyText': "ราคา: ฿{0} คุณมี ฿{1}<br>ต้องการซื้อที่ดินนี้หรือไม่?",
+                'buyButton': "ซื้อ", 'passButton': "ไม่ซื้อ", 'confirmEndTurnTitle': "จบตา?",
+                'confirmEndTurnText': "{0} ต้องการจบตาหรือไม่?", 'endTurnButton': "จบตา", 'okButton': "ตกลง",
+                'messageTitle': "ข้อความ", 'cardTitle': "การ์ด!", 'cardText': "{0} หยิบการ์ด {1}!<br><em>(ยังไม่พัฒนา)</em>",
+                'goToJailTitle': "เข้าคุก!", 'goToJailText': "{0} ถูกส่งไปเข้าคุก!",
+                'inJailMessageTitle': "อยู่ในคุก", 'inJailMessagePayOrWait': "{0} อยู่ในคุก ทอยได้ {1}, {2}<br>จ่าย ฿50 ออกจากคุก หรือรอตาหน้า?",
+                'pay50Button': "จ่าย ฿50", 'waitNextTurnButton': "รอตาหน้า", 'notEnoughMoneyTitle': "เงินไม่พอ",
+                'notEnoughMoneyToPayJailText': "เงินไม่พอจ่ายค่าออกจากคุก (฿50)",
+                'log_gameStart': "เกมเศรษฐีเริ่มต้นแล้ว!", 'log_playerTurn': "ตาของ {0} กรุณาทอยลูกเต๋า",
+                'log_rolledDice': "{0} ทอยได้ {1} และ {2} (รวม {3})", 'log_movedTo': "{0} เดินจาก {1} ไปยัง {2}",
+                'log_passedGo': "{0} ผ่านจุดเริ่มต้น ได้รับ ฿{1} เงินปัจจุบัน: ฿{2}",
+                'log_landedOn': "{0} ตกอยู่ที่ช่อง: {1}",
+                'log_buyProperty': "{0} ซื้อ {1} ราคา ฿{2} เหลือ: ฿{3}",
+                'log_decidedNotToBuy': "{0} ไม่ซื้อ {1}", 'log_paidRent': "{0} จ่ายค่าเช่า ฿{1} ให้ {2} สำหรับ {3}",
+                'log_notEnoughMoneyForRent': "{0} เงินไม่พอจ่ายค่าเช่า ฿{1} ให้ {2}!",
+                'log_bankrupt': "{0} ล้มละลาย!", 'log_landedOnOwnProperty': "{0} ตกที่ {1} ของตัวเอง",
+                'log_paidTax': "{0} จ่ายภาษี {1} จำนวน ฿{2} เหลือ: ฿{3}",
+                'log_notEnoughMoneyForTax': "{0} เงินไม่พอจ่ายภาษี ฿{1}!",
+                'log_goToJail': "{0} ต้องไปเข้าคุก!", 'log_inJailTurn': "{0} อยู่ในคุก (ตาที่ {1})",
+                'log_rolledDoublesJail': "{0} ทอยเบิ้ล ({1}, {2})! ออกจากคุก",
+                'log_jail3TurnsPay': "{0} อยู่ในคุกครบ 3 ตา ต้องจ่าย ฿50 ออก",
+                'log_paid50OutOfJail': "{0} จ่าย ฿50 ออกจากคุก เหลือ: ฿{1}",
+                'log_notEnoughMoneyForJailFine': "{0} เงินไม่พอจ่ายค่าออกคุก (฿50)",
+                'log_stayInJailNoDoubles': "{0} ทอยไม่เบิ้l ยังอยู่ในคุก จ่าย ฿50 หรือรอ",
+                'log_choseToWaitInJail': "{0} เลือกที่จะรอทอยตาหน้า", 'log_drawCard': "{0} หยิบการ์ด {1} (ยังไม่พัฒนา)",
+                'log_landedOnJailVisit': "{0} แค่มาเยี่ยมคุก", 'log_landedOnGo': "{0} อยู่ที่จุดเริ่มต้น",
+                'log_landedOnFreeParking': "{0} จอดรถฟรี", 'log_noSpecialAction': "ไม่มีแอคชั่นพิเศษสำหรับ {0}",
+                'log_endTurn': "จบตาของ {0}", 'log_nextTurn': "--- ตาต่อไป: {0} ---",
+                'chanceCardName': "เสี่ยงโชค", 'communityChestCardName': "หีบสมบัติ",
+                'player1Name': "ผู้เล่น 1", 'player2Name': "ผู้เล่น 2", 'player3Name': "ผู้เล่น 3", 'player4Name': "ผู้เล่น 4",
+                'space_0': "จุดเริ่มต้น", 'space_1': "คลองถม", 'space_2': "หีบสมบัติ", 'space_3': "พาหุรัด",
+                'space_4': "ภาษีเงินได้", 'space_5': "สถานีหัวลำโพง", 'space_6': "เยาวราช", 'space_7': "เสี่ยงโชค",
+                'space_8': "เจริญกรุง", 'space_9': "สีลม", 'space_10': "เข้าคุก/\nเยี่ยมคุก", 'space_11': "สุขุมวิท",
+                'space_12': "การไฟฟ้า", 'space_13': "ทองหล่อ", 'space_14': "เอกมัย", 'space_15': "สถานีบางซื่อ",
+                'space_16': "สยามสแควร์", 'space_17': "หีบสมบัติ", 'space_18': "มาบุญครอง", 'space_19': "เซ็นทรัลเวิลด์",
+                'space_20': "ที่จอดรถฟรี", 'space_21': "อโศก", 'space_22': "เสี่ยงโชค", 'space_23': "นานา",
+                'space_24': "เพลินจิต", 'space_25': "สถานีธนบุรี", 'space_26': "ชิดลม", 'space_27': "วิทยุ",
+                'space_28': "การประปา", 'space_29': "ราชดำริ", 'space_30': "ไปเข้าคุก", 'space_31': "พัทยา",
+                'space_32': "หัวหิน", 'space_33': "หีบสมบัติ", 'space_34': "ภูเก็ต", 'space_35': "สถานีเชียงใหม่",
+                'space_36': "เสี่ยงโชค", 'space_37': "เชียงใหม่", 'space_38': "ภาษีฟุ่มเฟือย", 'space_39': "กรุงเทพ",
+                'boardLogoText': "เกมเศรษฐี", 'initialLogMessage': "เริ่มเกม!", 'logoAltText': "โลโก้เกม"
+            },
+            'en': {
+                'gameTitle': "Monopoly Fun", 'rollDiceBtn': "Roll Dice", 'playerTurnLabel': "Player's Turn:",
+                'moneyLabel': "Money:", 'positionLabel': "Position:", 'propertiesLabel': "Properties:",
+                'inJailLabel': "In Jail", 'turnsLabel': "turns", 'noPropertiesLabel': "None",
+                'buyPropertyTitle': "Buy Property: {0}?", 'buyPropertyText': "Price: ฿{0}. You have ฿{1}.<br>Buy this property?",
+                'buyButton': "Buy", 'passButton': "Pass", 'confirmEndTurnTitle': "End Turn?",
+                'confirmEndTurnText': "{0}, end your turn?", 'endTurnButton': "End Turn", 'okButton': "OK",
+                'messageTitle': "Message", 'cardTitle': "Card!", 'cardText': "{0} drew {1} card!<br><em>(Not developed)</em>",
+                'goToJailTitle': "Go to Jail!", 'goToJailText': "{0} is sent to jail!",
+                'inJailMessageTitle': "In Jail", 'inJailMessagePayOrWait': "{0} is in jail. Rolled {1}, {2}.<br>Pay ฿50 or wait?",
+                'pay50Button': "Pay ฿50", 'waitNextTurnButton': "Wait Turn", 'notEnoughMoneyTitle': "Not Enough Money",
+                'notEnoughMoneyToPayJailText': "Not enough money for ฿50 jail fine.",
+                'log_gameStart': "Monopoly game started!", 'log_playerTurn': "{0}'s turn. Roll dice.",
+                'log_rolledDice': "{0} rolled {1} & {2} (total {3})", 'log_movedTo': "{0} moved from {1} to {2}",
+                'log_passedGo': "{0} passed GO, got ฿{1}. Now: ฿{2}",
+                'log_landedOn': "{0} landed on: {1}",
+                'log_buyProperty': "{0} bought {1} for ฿{2}. Left: ฿{3}",
+                'log_decidedNotToBuy': "{0} didn't buy {1}", 'log_paidRent': "{0} paid ฿{1} rent to {2} for {3}",
+                'log_notEnoughMoneyForRent': "{0} can't pay ฿{1} rent to {2}!",
+                'log_bankrupt': "{0} is bankrupt!", 'log_landedOnOwnProperty': "{0} landed on own {1}",
+                'log_paidTax': "{0} paid {1} tax ฿{2}. Left: ฿{3}",
+                'log_notEnoughMoneyForTax': "{0} can't pay ฿{1} tax!",
+                'log_goToJail': "{0} must go to jail!", 'log_inJailTurn': "{0} in jail (turn {1})",
+                'log_rolledDoublesJail': "{0} rolled doubles ({1}, {2})! Out of jail",
+                'log_jail3TurnsPay': "{0} in jail 3 turns. Must pay ฿50",
+                'log_paid50OutOfJail': "{0} paid ฿50, out of jail. Left: ฿{1}",
+                'log_notEnoughMoneyForJailFine': "{0} can't pay ฿50 jail fine",
+                'log_stayInJailNoDoubles': "{0} no doubles. Stay in jail. Pay ฿50 or wait",
+                'log_choseToWaitInJail': "{0} chose to wait next turn", 'log_drawCard': "{0} drew {1} (Not developed)",
+                'log_landedOnJailVisit': "{0} just visiting jail", 'log_landedOnGo': "{0} is at GO",
+                'log_landedOnFreeParking': "{0} on Free Parking", 'log_noSpecialAction': "No special action for {0}",
+                'log_endTurn': "End of {0}'s turn", 'log_nextTurn': "--- Next turn: {0} ---",
+                'chanceCardName': "Chance", 'communityChestCardName': "Community Chest",
+                'player1Name': "Player 1", 'player2Name': "Player 2", 'player3Name': "Player 3", 'player4Name': "Player 4",
+                'space_0': "Go", 'space_1': "Old Town", 'space_2': "Community Chest", 'space_3': "Textile Market",
+                'space_4': "Income Tax", 'space_5': "Main Station", 'space_6': "Chinatown", 'space_7': "Chance",
+                'space_8': "New Road", 'space_9': "Business District", 'space_10': "Jail/\nVisiting", 'space_11': "Uptown Ave",
+                'space_12': "Electric Co.", 'space_13': "Luxury Lane", 'space_14': "Gallery Place", 'space_15': "North Station",
+                'space_16': "Central Plaza", 'space_17': "Community Chest", 'space_18': "Shopping Mall", 'space_19': "World Center",
+                'space_20': "Free Parking", 'space_21': "Midtown Blvd", 'space_22': "Chance", 'space_23': "Entertainment Rd",
+                'space_24': "Financial Hub", 'space_25': "South Station", 'space_26': "Park Avenue", 'space_27': "Embassy Row",
+                'space_28': "Water Works", 'space_29': "Grand Circle", 'space_30': "Go To Jail", 'space_31': "Beach Resort",
+                'space_32': "Seaside Town", 'space_33': "Community Chest", 'space_34': "Island Getaway", 'space_35': "Airport Station",
+                'space_36': "Chance", 'space_37': "Mountain View", 'space_38': "Luxury Tax", 'space_39': "Capital City",
+                'boardLogoText': "Monopoly", 'initialLogMessage': "Game Started!", 'logoAltText': "Game Logo"
+            },
+            'jp': { // Mostly placeholders, needs full translation
+                'gameTitle': "モノポリーゲーム", 'rollDiceBtn': "サイコロを振る", 'playerTurnLabel': "プレイヤーの番:",
+                'moneyLabel': "所持金:", 'positionLabel': "位置:", 'propertiesLabel': "物件:",
+                'inJailLabel': "刑務所", 'turnsLabel': "ターン", 'noPropertiesLabel': "なし",
+                'buyPropertyTitle': "物件購入: {0}?", 'buyPropertyText': "価格: ฿{0} 所持金: ฿{1}<br>購入しますか？",
+                'buyButton': "購入", 'passButton': "パス", 'confirmEndTurnTitle': "ターン終了?",
+                'confirmEndTurnText': "{0}さん、終了しますか？", 'endTurnButton': "終了", 'okButton': "OK",
+                'messageTitle': "メッセージ", 'cardTitle': "カード！", 'cardText': "{0}が{1}を引いた!<br><em>(未実装)</em>",
+                'goToJailTitle': "刑務所へ！", 'goToJailText': "{0}は刑務所へ！",
+                'inJailMessageTitle': "刑務所", 'inJailMessagePayOrWait': "{0}は刑務所。出目{1},{2}<br>฿50払うか次ターン待つか？",
+                'pay50Button': "฿50払う", 'waitNextTurnButton': "待つ", 'notEnoughMoneyTitle': "資金不足",
+                'notEnoughMoneyToPayJailText': "฿50の罰金が払えません。",
+                'log_gameStart': "ゲーム開始！", 'log_playerTurn': "{0}の番です。",
+                'player1Name': "プレーヤー1", 'player2Name': "プレーヤー2", 'player3Name': "プレーヤー3", 'player4Name': "プレーヤー4",
+                'space_0': "スタート", 'space_1': "古い町", /* ... more translations needed ... */ 'space_39': "首都",
+                'boardLogoText': "モノポリー", 'initialLogMessage': "ゲーム開始！", 'logoAltText': "ゲームロゴ"
+            },
+            'cn': { // Mostly placeholders, needs full translation
+                'gameTitle': "大富翁游戏", 'rollDiceBtn': "掷骰子", 'playerTurnLabel': "玩家回合:",
+                'moneyLabel': "金钱:", 'positionLabel': "位置:", 'propertiesLabel': "地产:",
+                'inJailLabel': "监狱中", 'turnsLabel': "回合", 'noPropertiesLabel': "无",
+                'buyPropertyTitle': "购买地产: {0}?", 'buyPropertyText': "价格: ฿{0} 您有: ฿{1}<br>购买吗？",
+                'buyButton': "购买", 'passButton': "跳过", 'confirmEndTurnTitle': "结束回合?",
+                'confirmEndTurnText': "{0}, 结束回合吗？", 'endTurnButton': "结束", 'okButton': "确定",
+                'messageTitle': "信息", 'cardTitle': "卡片！", 'cardText': "{0}抽到{1}卡!<br><em>(未开发)</em>",
+                'goToJailTitle': "进监狱！", 'goToJailText': "{0}进监狱了！",
+                'inJailMessageTitle': "监狱中", 'inJailMessagePayOrWait': "{0}在监狱。掷出{1},{2}<br>付฿50出狱或等下回合？",
+                'pay50Button': "付฿50", 'waitNextTurnButton': "等待", 'notEnoughMoneyTitle': "金钱不足",
+                'notEnoughMoneyToPayJailText': "无法支付฿50出狱费。",
+                'log_gameStart': "游戏开始！", 'log_playerTurn': "{0}的回合。",
+                'player1Name': "玩家1", 'player2Name': "玩家2", 'player3Name': "玩家3", 'player4Name': "玩家4",
+                'space_0': "起点", 'space_1': "旧城区", /* ... more translations needed ... */ 'space_39': "首都",
+                'boardLogoText': "大富翁", 'initialLogMessage': "游戏开始！", 'logoAltText': "游戏标志"
+            }
+        };
+
+        // Helper function for string formatting
+        function formatString(str, ...args) {
+            return str.replace(/{(\d+)}/g, (match, number) => {
+                return typeof args[number] !== 'undefined' ? args[number] : match;
+            });
+        }
+
+        // Function to get translated string
+        function _(key, ...args) {
+            const langData = i18n[currentLanguage] || i18n['en']; // Fallback to English
+            const template = langData[key] || key; // Fallback to key itself if not found
+            return formatString(template, ...args);
+        }
+
+        // --- Utility Functions ---
+        function getRandomDiceValue() { return Math.floor(Math.random() * 6) + 1; }
+
+        function logAction(messageKey, ...args) {
+            const translatedMessage = _(messageKey, ...args);
+            const p = document.createElement('p');
+            p.textContent = translatedMessage;
+            actionLogElement.appendChild(p);
+            actionLogElement.scrollTop = actionLogElement.scrollHeight;
+            console.log(translatedMessage);
+        }
+
+        function showMessage(titleKey, textKey, buttonsConfig = [{ textKey: "okButton", className: 'bg-sky-500 hover:bg-sky-600', action: hideMessage }], ...textArgs) {
+            messageBoxTitle.textContent = _(titleKey);
+            messageBoxText.innerHTML = _(textKey, ...textArgs);
+            messageBoxButtons.innerHTML = '';
+
+            buttonsConfig.forEach(btnConfig => {
+                const button = document.createElement('button');
+                button.textContent = _(btnConfig.textKey);
+                button.className = `text-white font-semibold py-2 px-4 rounded ${btnConfig.className || 'bg-sky-500 hover:bg-sky-600'}`;
+                button.onclick = () => {
+                    hideMessage();
+                    if (btnConfig.action) btnConfig.action();
+                };
+                messageBoxButtons.appendChild(button);
+            });
+
+            messageBoxOverlay.classList.remove('hidden');
+            messageBox.classList.remove('hidden');
+        }
+
+        function hideMessage() {
+            messageBoxOverlay.classList.add('hidden');
+            messageBox.classList.add('hidden');
+        }
+
+        // --- Board Definition ---
+        function createBoardSpaces() {
+            boardSpaces = [
+                { id: 0, nameKey: "space_0", type: "go", price: 0, rent: [], colorGroup: null },
+                { id: 1, nameKey: "space_1", type: "property", price: 60, rent: [2, 10, 30, 90, 160, 250], colorGroup: "brown" },
+                { id: 2, nameKey: "space_2", type: "community_chest", price: 0, rent: [], colorGroup: null },
+                { id: 3, nameKey: "space_3", type: "property", price: 60, rent: [4, 20, 60, 180, 320, 450], colorGroup: "brown" },
+                { id: 4, nameKey: "space_4", type: "tax", price: 200, rent: [], colorGroup: null },
+                { id: 5, nameKey: "space_5", type: "property", group: "station", price: 200, rent: [25, 50, 100, 200], colorGroup: "station" },
+                { id: 6, nameKey: "space_6", type: "property", price: 100, rent: [6, 30, 90, 270, 400, 550], colorGroup: "lightblue" },
+                { id: 7, nameKey: "space_7", type: "chance", price: 0, rent: [], colorGroup: null },
+                { id: 8, nameKey: "space_8", type: "property", price: 100, rent: [6, 30, 90, 270, 400, 550], colorGroup: "lightblue" },
+                { id: 9, nameKey: "space_9", type: "property", price: 120, rent: [8, 40, 100, 300, 450, 600], colorGroup: "lightblue" },
+                { id: 10, nameKey: "space_10", type: "jail", price: 0, rent: [], colorGroup: null },
+                { id: 11, nameKey: "space_11", type: "property", price: 140, rent: [10, 50, 150, 450, 625, 750], colorGroup: "pink" },
+                { id: 12, nameKey: "space_12", type: "property", group: "utility", price: 150, rent: [], colorGroup: "utility" },
+                { id: 13, nameKey: "space_13", type: "property", price: 140, rent: [10, 50, 150, 450, 625, 750], colorGroup: "pink" },
+                { id: 14, nameKey: "space_14", type: "property", price: 160, rent: [12, 60, 180, 500, 700, 900], colorGroup: "pink" },
+                { id: 15, nameKey: "space_15", type: "property", group: "station", price: 200, rent: [25, 50, 100, 200], colorGroup: "station" },
+                { id: 16, nameKey: "space_16", type: "property", price: 180, rent: [14, 70, 200, 550, 750, 950], colorGroup: "orange" },
+                { id: 17, nameKey: "space_17", type: "community_chest", price: 0, rent: [], colorGroup: null },
+                { id: 18, nameKey: "space_18", type: "property", price: 180, rent: [14, 70, 200, 550, 750, 950], colorGroup: "orange" },
+                { id: 19, nameKey: "space_19", type: "property", price: 200, rent: [16, 80, 220, 600, 800, 1000], colorGroup: "orange" },
+                { id: 20, nameKey: "space_20", type: "free_parking", price: 0, rent: [], colorGroup: null },
+                { id: 21, nameKey: "space_21", type: "property", price: 220, rent: [18, 90, 250, 700, 875, 1050], colorGroup: "red" },
+                { id: 22, nameKey: "space_22", type: "chance", price: 0, rent: [], colorGroup: null },
+                { id: 23, nameKey: "space_23", type: "property", price: 220, rent: [18, 90, 250, 700, 875, 1050], colorGroup: "red" },
+                { id: 24, nameKey: "space_24", type: "property", price: 240, rent: [20, 100, 300, 750, 925, 1100], colorGroup: "red" },
+                { id: 25, nameKey: "space_25", type: "property", group: "station", price: 200, rent: [25, 50, 100, 200], colorGroup: "station" },
+                { id: 26, nameKey: "space_26", type: "property", price: 260, rent: [22, 110, 330, 800, 975, 1150], colorGroup: "yellow" },
+                { id: 27, nameKey: "space_27", type: "property", price: 260, rent: [22, 110, 330, 800, 975, 1150], colorGroup: "yellow" },
+                { id: 28, nameKey: "space_28", type: "property", group: "utility", price: 150, rent: [], colorGroup: "utility" },
+                { id: 29, nameKey: "space_29", type: "property", price: 280, rent: [24, 120, 360, 850, 1025, 1200], colorGroup: "yellow" },
+                { id: 30, nameKey: "space_30", type: "go_to_jail", price: 0, rent: [], colorGroup: null },
+                { id: 31, nameKey: "space_31", type: "property", price: 300, rent: [26, 130, 390, 900, 1100, 1275], colorGroup: "green" },
+                { id: 32, nameKey: "space_32", type: "property", price: 300, rent: [26, 130, 390, 900, 1100, 1275], colorGroup: "green" },
+                { id: 33, nameKey: "space_33", type: "community_chest", price: 0, rent: [], colorGroup: null },
+                { id: 34, nameKey: "space_34", type: "property", price: 320, rent: [28, 150, 450, 1000, 1200, 1400], colorGroup: "green" },
+                { id: 35, nameKey: "space_35", type: "property", group: "station", price: 200, rent: [25, 50, 100, 200], colorGroup: "station" },
+                { id: 36, nameKey: "space_36", type: "chance", price: 0, rent: [], colorGroup: null },
+                { id: 37, nameKey: "space_37", type: "property", price: 350, rent: [35, 175, 500, 1100, 1300, 1500], colorGroup: "darkblue" },
+                { id: 38, nameKey: "space_38", type: "tax", price: 100, rent: [], colorGroup: null },
+                { id: 39, nameKey: "space_39", type: "property", price: 400, rent: [50, 200, 600, 1400, 1700, 2000], colorGroup: "darkblue" },
+            ];
+            boardSpaces.forEach(space => {
+                if (space.type === 'property') {
+                    space.owner = null; space.houses = 0;
+                }
+            });
+        }
+
+        // --- Player Initialization ---
+        function initializePlayers() {
+            players = []; // Clear previous players if any (for restart scenario)
+            for (let i = 0; i < 4; i++) {
+                players.push({
+                    id: i,
+                    name: _(`player${i+1}Name`), // Translated player name
+                    money: INITIAL_MONEY,
+                    position: 0, inJail: false, jailTurns: 0,
+                    properties: [], tokenElement: null, color: PLAYER_COLORS[i]
+                });
+            }
+        }
+
+        // --- Rendering Functions ---
+        function renderBoard() {
+            gameBoardElement.innerHTML = ''; // Clear existing board
+            const centerAreaHTML = `<div class="center-area">
+                                    <h2 id="board-logo-text" class="text-2xl font-bold text-sky-800">${_('boardLogoText')}</h2>
+                                    <img id="board-logo-image" src="https://placehold.co/100x100/0284c7/ffffff?text=MONOPOLY" alt="${_('logoAltText')}" class="my-4 rounded-lg">
+                                  </div>`;
+
+            boardSpaces.forEach((space, index) => {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.dataset.id = index;
+
+                const nameDiv = document.createElement('div');
+                nameDiv.classList.add('name');
+                nameDiv.textContent = _(space.nameKey); // Use translated name
+                cell.appendChild(nameDiv);
+
+                if (space.type === 'property' && space.price > 0) {
+                    const priceDiv = document.createElement('div');
+                    priceDiv.classList.add('price');
+                    priceDiv.textContent = `฿${space.price}`;
+                    cell.appendChild(priceDiv);
+                    if(space.colorGroup && space.colorGroup !== 'station' && space.colorGroup !== 'utility') {
+                        const colorBar = document.createElement('div');
+                        colorBar.classList.add('property-color');
+                        colorBar.style.backgroundColor = getGroupColor(space.colorGroup);
+                        cell.appendChild(colorBar);
+                    }
+                }
+                 if (space.type === 'go' || space.type === 'jail' || space.type === 'free_parking' || space.type === 'go_to_jail') {
+                    cell.classList.add('corner');
+                    // For corner names that might need line breaks, handle them if necessary in translation or here
+                    nameDiv.innerHTML = _(space.nameKey).replace('\\n', '<br>');
+                }
+
+                // Assign grid position (same as before)
+                if (index === 0) { cell.style.gridArea = "11 / 11 / 12 / 12"; }
+                else if (index > 0 && index < 10) { cell.style.gridArea = `11 / ${11 - index} / 12 / ${12 - index}`; }
+                else if (index === 10) { cell.style.gridArea = "11 / 1 / 12 / 2"; }
+                else if (index > 10 && index < 20) { cell.style.gridArea = `${11 - (index - 10)} / 1 / ${12 - (index - 10)} / 2`; }
+                else if (index === 20) { cell.style.gridArea = "1 / 1 / 2 / 2"; }
+                else if (index > 20 && index < 30) { cell.style.gridArea = `1 / ${1 + (index - 20)} / 2 / ${2 + (index - 20)}`; }
+                else if (index === 30) { cell.style.gridArea = "1 / 11 / 2 / 12"; }
+                else if (index > 30 && index < 40) { cell.style.gridArea = `${1 + (index - 30)} / 11 / ${2 + (index - 30)} / 12`; }
+                gameBoardElement.appendChild(cell);
+
+                // Update visual ownership if property is owned
+                if (space.type === 'property' && space.owner !== null && players[space.owner]) {
+                     cell.style.borderColor = players[space.owner].color;
+                     cell.style.borderWidth = '3px';
+                }
+            });
+            gameBoardElement.insertAdjacentHTML('beforeend', centerAreaHTML);
+            // Re-assign DOM element references after clearing and re-populating gameBoardElement's innerHTML
+            boardLogoTextElement = document.getElementById('board-logo-text');
+            boardLogoImageElement = document.getElementById('board-logo-image');
+        }
+
+        function getGroupColor(group) {
+            const colors = {"brown": "#A0522D", "lightblue": "#ADD8E6", "pink": "#FFC0CB", "orange": "#FFA500", "red": "#FF0000", "yellow": "#FFFF00", "green": "#008000", "darkblue": "#00008B"};
+            return colors[group] || '#ccc';
+        }
+
+        function createPlayerTokens() {
+            playerTokensContainer.innerHTML = '';
+            players.forEach((player, index) => {
+                const token = document.createElement('div');
+                token.classList.add('player-token', `player-${index + 1}`);
+                token.textContent = `P${index + 1}`;
+                token.style.backgroundColor = player.color;
+                player.tokenElement = token;
+                playerTokensContainer.appendChild(token);
+                updateTokenPosition(player.id);
+            });
+        }
+
+        function updateTokenPosition(playerId) {
+            const player = players[playerId];
+            if (!player || !player.tokenElement) return; // Guard against errors if player/token not ready
+            const cellElement = gameBoardElement.querySelector(`.cell[data-id="${player.position}"]`);
+            if (cellElement) {
+                const boardRect = gameBoardElement.getBoundingClientRect();
+                const cellRect = cellElement.getBoundingClientRect();
+                const tokensOnSameCell = players.filter(p => p.position === player.position);
+                const tokenIndexOnCell = tokensOnSameCell.findIndex(p => p.id === playerId);
+                const numTokensOnCell = tokensOnSameCell.length;
+                let offsetX = (cellRect.width - player.tokenElement.offsetWidth) / 2;
+                let offsetY = (cellRect.height - player.tokenElement.offsetHeight) / 2;
+                if (numTokensOnCell > 1) {
+                    const angle = (tokenIndexOnCell / numTokensOnCell) * 2 * Math.PI + (Math.PI / 4); // Offset start angle
+                    const radius = Math.min(cellRect.width, cellRect.height) / 5;
+                    offsetX += radius * Math.cos(angle);
+                    offsetY += radius * Math.sin(angle);
+                }
+                player.tokenElement.style.left = `${cellRect.left - boardRect.left + offsetX}px`;
+                player.tokenElement.style.top = `${cellRect.top - boardRect.top + offsetY}px`;
+            }
+        }
+        function updateAllTokenPositions() { players.forEach(player => updateTokenPosition(player.id)); }
+
+        function updatePlayerInfoDisplay() {
+            if (!players[currentPlayerIndex]) return; // Guard if players not initialized
+            const player = players[currentPlayerIndex];
+            playerTurnLabelStaticElement.textContent = _('playerTurnLabel');
+            currentPlayerNameDisplay.textContent = `${player.name} (฿${player.money})`;
+
+            playerInfoContainer.innerHTML = '';
+            players.forEach((p, index) => {
+                const card = document.createElement('div');
+                card.className = `player-info-card p-3 rounded-lg shadow ${index === currentPlayerIndex ? 'active border-2 border-amber-400 bg-amber-50' : 'bg-white'}`;
+                const propertiesOwned = p.properties.map(id => _(boardSpaces[id].nameKey)).join(', ') || _('noPropertiesLabel');
+                card.innerHTML = `
+                    <div class="flex items-center mb-2">
+                        <div class="w-5 h-5 rounded-full mr-2" style="background-color: ${p.color};"></div>
+                        <h3 class="font-semibold text-lg ${index === currentPlayerIndex ? 'text-amber-700' : 'text-gray-700'}">${p.name}</h3>
+                    </div>
+                    <p class="text-sm ${index === currentPlayerIndex ? 'text-amber-600' : 'text-gray-600'}">${_('moneyLabel')} ฿${p.money}</p>
+                    <p class="text-sm ${index === currentPlayerIndex ? 'text-amber-600' : 'text-gray-600'}">${_('positionLabel')} ${_(boardSpaces[p.position].nameKey)}</p>
+                    ${p.inJail ? `<p class="text-sm text-red-500">${_('inJailLabel')} (${p.jailTurns} ${_('turnsLabel')})</p>` : ''}
+                    <div class="mt-1 text-xs ${index === currentPlayerIndex ? 'text-amber-500' : 'text-gray-500'}">${_('propertiesLabel')} ${propertiesOwned}</div>
+                `;
+                playerInfoContainer.appendChild(card);
+            });
+        }
+
+        function updateUIText() {
+            document.documentElement.lang = currentLanguage; // Set lang attribute on HTML element
+            // Update static text elements
+            gameTitleElement.textContent = _('gameTitle');
+            rollDiceButton.textContent = _('rollDiceBtn');
+             // boardLogoTextElement and boardLogoImageElement will be updated within renderBoard after it's called
+
+
+            // Update player names if they depend on language (already handled in initializePlayers and updatePlayerInfoDisplay)
+            // Re-initialize players to get translated names (if game has started, this might reset progress, so be careful)
+            // A better way is to update player.name directly if game is ongoing.
+            if (players.length > 0) {
+                players.forEach((p,idx) => p.name = _(`player${idx+1}Name`));
+            }
+
+
+            // Re-render board for property names and to update boardLogoTextElement/ImageElement
+            renderBoard();
+            // Re-render player info for labels and property names list
+            updatePlayerInfoDisplay();
+            // Update action log's initial message if it's the only message
+            if (actionLogElement.children.length <= 1) { // Check if only initial message or empty
+                 actionLogElement.innerHTML = ''; // Clear if needed
+                 const p = document.createElement('p');
+                 p.textContent = _('initialLogMessage');
+                 actionLogElement.appendChild(p);
+            }
+            updateAllTokenPositions(); // Tokens might need repositioning after board re-render
+
+            // Update active language button style
+            document.querySelectorAll('#language-selector button').forEach(button => {
+                button.classList.toggle('active', button.dataset.lang === currentLanguage);
+            });
+             // Set body font based on language
+            switch (currentLanguage) {
+                case 'th':
+                    document.body.style.fontFamily = "'Noto Sans Thai', 'Inter', sans-serif";
+                    break;
+                case 'jp':
+                    document.body.style.fontFamily = "'Noto Sans JP', 'Inter', sans-serif";
+                    break;
+                case 'cn':
+                    document.body.style.fontFamily = "'Noto Sans SC', 'Inter', sans-serif";
+                    break;
+                default: // en or others
+                    document.body.style.fontFamily = "'Inter', 'Noto Sans Thai', sans-serif"; // Inter first for English
+                    break;
+            }
+        }
+
+
+        // --- Game Logic (largely unchanged, but uses _() for messages) ---
+        function startGame() {
+            createBoardSpaces(); // Defines board structure with nameKeys
+            initializePlayers(); // Initializes players with translated names
+            
+            currentPlayerIndex = 0;
+            gameActive = true;
+            diceRolledThisTurn = false;
+            
+            updateUIText(); // This will call renderBoard, updatePlayerInfoDisplay, etc.
+            
+            createPlayerTokens(); // Create tokens after board is rendered
+            updateAllTokenPositions(); // Position tokens correctly
+            
+            rollDiceButton.disabled = false;
+            logAction('log_gameStart');
+            logAction('log_playerTurn', players[currentPlayerIndex].name);
+        }
+
+        function rollDice() {
+            if (!gameActive || diceRolledThisTurn) return;
+            const d1 = getRandomDiceValue();
+            const d2 = getRandomDiceValue();
+            dice1Img.src = `https://placehold.co/40x40/cbd5e1/475569?text=${d1}`;
+            dice2Img.src = `https://placehold.co/40x40/cbd5e1/475569?text=${d2}`;
+            const totalRoll = d1 + d2;
+            diceRolledThisTurn = true;
+            rollDiceButton.disabled = true;
+
+            const player = players[currentPlayerIndex];
+            logAction('log_rolledDice', player.name, d1, d2, totalRoll);
+
+            if (player.inJail) {
+                handleJailTurn(player, d1, d2);
+                return;
+            }
+            movePlayer(totalRoll);
+        }
+
+        function movePlayer(steps) {
+            const player = players[currentPlayerIndex];
+            const oldPosition = player.position;
+            const oldPositionNameKey = boardSpaces[oldPosition].nameKey;
+            player.position = (player.position + steps) % BOARD_SIZE;
+
+            logAction('log_movedTo', player.name, _(oldPositionNameKey), _(boardSpaces[player.position].nameKey));
+            updateTokenPosition(player.id);
+
+            if (player.position < oldPosition && !player.inJail) {
+                player.money += PASS_GO_SALARY;
+                logAction('log_passedGo', player.name, PASS_GO_SALARY, player.money);
+                updatePlayerInfoDisplay();
+            }
+            setTimeout(handleLandingOnSpace, 700);
+        }
+
+        function handleLandingOnSpace() {
+            const player = players[currentPlayerIndex];
+            const currentSpace = boardSpaces[player.position];
+            logAction('log_landedOn', player.name, _(currentSpace.nameKey));
+
+            switch (currentSpace.type) {
+                case 'property':
+                    handlePropertyLanding(player, currentSpace);
+                    break;
+                case 'go_to_jail':
+                    goToJail(player);
+                    break;
+                case 'tax':
+                    payTax(player, currentSpace);
+                    promptEndTurn();
+                    break;
+                case 'chance':
+                case 'community_chest':
+                    drawCard(player, currentSpace.type);
+                    promptEndTurn();
+                    break;
+                case 'jail':
+                     logAction(player.inJail ? 'log_inJailTurn' : 'log_landedOnJailVisit', player.name, player.jailTurns +1);
+                    promptEndTurn();
+                    break;
+                case 'go':
+                    logAction('log_landedOnGo', player.name);
+                    promptEndTurn();
+                    break;
+                case 'free_parking':
+                    logAction('log_landedOnFreeParking', player.name);
+                    promptEndTurn();
+                    break;
+                default:
+                    logAction('log_noSpecialAction', _(currentSpace.nameKey));
+                    promptEndTurn();
+                    break;
+            }
+            updatePlayerInfoDisplay();
+        }
+
+        function handlePropertyLanding(player, space) {
+            const spaceName = _(space.nameKey);
+            if (space.owner === null) {
+                showMessage(
+                    'buyPropertyTitle', 'buyPropertyText',
+                    [
+                        { textKey: "buyButton", className: 'btn-buy', action: () => buyProperty(player, space) },
+                        { textKey: "passButton", className: 'btn-pass', action: () => {
+                            logAction('log_decidedNotToBuy', player.name, spaceName);
+                            promptEndTurn();
+                        }}
+                    ],
+                    spaceName, space.price, player.money
+                );
+            } else if (space.owner !== player.id) {
+                payRent(player, space);
+                promptEndTurn();
+            } else {
+                logAction('log_landedOnOwnProperty', player.name, spaceName);
+                promptEndTurn();
+            }
+        }
+
+        function buyProperty(player, space) {
+            const spaceName = _(space.nameKey);
+            if (player.money >= space.price) {
+                player.money -= space.price;
+                space.owner = player.id;
+                player.properties.push(space.id);
+                logAction('log_buyProperty', player.name, spaceName, space.price, player.money);
+                const cellElement = gameBoardElement.querySelector(`.cell[data-id="${space.id}"]`);
+                if (cellElement) {
+                    cellElement.style.borderColor = player.color;
+                    cellElement.style.borderWidth = '3px';
+                }
+            } else {
+                logAction('log_notEnoughMoneyForTax', player.name, spaceName, space.price, player.money); // Re-use for general not enough money
+            }
+            updatePlayerInfoDisplay();
+            promptEndTurn();
+        }
+
+        function payRent(player, space) {
+            const owner = players[space.owner];
+            const spaceName = _(space.nameKey);
+            let rentAmount = 0;
+            if (space.group === "station") {
+                const stationsOwned = owner.properties.filter(pId => boardSpaces[pId].group === "station").length;
+                rentAmount = space.rent[stationsOwned - 1] || 25;
+            } else if (space.group === "utility") {
+                const utilitiesOwned = owner.properties.filter(pId => boardSpaces[pId].group === "utility").length;
+                // Ensure dice images have been updated for current roll
+                const d1Val = parseInt(dice1Img.src.split('text=')[1]) || 1;
+                const d2Val = parseInt(dice2Img.src.split('text=')[1]) || 1;
+                const lastRoll = d1Val + d2Val;
+                rentAmount = utilitiesOwned === 1 ? lastRoll * 4 : lastRoll * 10;
+            } else {
+                rentAmount = space.rent[0]; // Base rent
+            }
+
+            if (player.money >= rentAmount) {
+                player.money -= rentAmount;
+                owner.money += rentAmount;
+                logAction('log_paidRent', player.name, rentAmount, owner.name, spaceName);
+            } else {
+                logAction('log_notEnoughMoneyForRent', player.name, rentAmount, owner.name);
+                owner.money += player.money;
+                player.money = 0;
+                logAction('log_bankrupt', player.name);
+            }
+            updatePlayerInfoDisplay();
+        }
+
+        function payTax(player, space) {
+            const taxAmount = space.price;
+            const spaceName = _(space.nameKey);
+            if (player.money >= taxAmount) {
+                player.money -= taxAmount;
+                logAction('log_paidTax', player.name, spaceName, taxAmount, player.money);
+            } else {
+                logAction('log_notEnoughMoneyForTax', player.name, taxAmount);
+                player.money = 0;
+            }
+            updatePlayerInfoDisplay();
+        }
+
+        function goToJail(player) {
+            logAction('log_goToJail', player.name);
+            player.position = JAIL_POSITION;
+            player.inJail = true;
+            player.jailTurns = 0;
+            updateTokenPosition(player.id);
+            updatePlayerInfoDisplay();
+            showMessage("goToJailTitle", "goToJailText", [{ textKey: "okButton", action: endTurn }], player.name);
+        }
+        
+        function handleJailTurn(player, d1, d2) {
+            logAction('log_inJailTurn', player.name, player.jailTurns + 1);
+            player.jailTurns++;
+
+            if (d1 === d2) {
+                logAction('log_rolledDoublesJail', player.name, d1, d2);
+                player.inJail = false; player.jailTurns = 0;
+                rollDiceButton.disabled = true;
+                movePlayer(d1 + d2);
+            } else if (player.jailTurns >= 3) {
+                logAction('log_jail3TurnsPay', player.name);
+                if (player.money >= 50) {
+                    player.money -= 50; player.inJail = false; player.jailTurns = 0;
+                    logAction('log_paid50OutOfJail', player.name, player.money);
+                    updatePlayerInfoDisplay();
+                    rollDiceButton.disabled = true;
+                    movePlayer(d1 + d2);
+                } else {
+                    logAction('log_notEnoughMoneyForJailFine', player.name);
+                    promptEndTurn();
+                }
+            } else {
+                logAction('log_stayInJailNoDoubles', player.name);
+                showMessage("inJailMessageTitle", "inJailMessagePayOrWait",
+                    [
+                        { textKey: "pay50Button", className: "btn-buy", action: () => {
+                            if (player.money >= 50) {
+                                player.money -= 50; player.inJail = false; player.jailTurns = 0;
+                                logAction('log_paid50OutOfJail', player.name, player.money);
+                                updatePlayerInfoDisplay();
+                                rollDiceButton.disabled = true; movePlayer(d1 + d2);
+                            } else {
+                                logAction('log_notEnoughMoneyForJailFine', player.name);
+                                showMessage("notEnoughMoneyTitle", "notEnoughMoneyToPayJailText", [{textKey: "okButton", action: promptEndTurn}]);
+                            }
+                        }},
+                        { textKey: "waitNextTurnButton", className: "btn-pass", action: () => {
+                            logAction('log_choseToWaitInJail', player.name);
+                            promptEndTurn();
+                        }}
+                    ], player.name, d1, d2
+                );
+            }
+        }
+
+        function drawCard(player, cardTypeKey) {
+            const cardTypeName = _(cardTypeKey === 'chance' ? 'chanceCardName' : 'communityChestCardName');
+            logAction('log_drawCard', player.name, cardTypeName);
+            showMessage("cardTitle", "cardText", [{textKey: "okButton"}], player.name, cardTypeName);
+        }
+
+        function promptEndTurn() {
+            if (players[currentPlayerIndex].inJail && boardSpaces[players[currentPlayerIndex].position].type === 'go_to_jail') {
+                return;
+            }
+            showMessage("confirmEndTurnTitle", "confirmEndTurnText",
+                [{ textKey: "endTurnButton", className: 'bg-indigo-500 hover:bg-indigo-600', action: endTurn }],
+                players[currentPlayerIndex].name
+            );
+        }
+
+        function endTurn() {
+            if (!gameActive) return;
+            logAction('log_endTurn', players[currentPlayerIndex].name);
+            currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+            diceRolledThisTurn = false;
+            rollDiceButton.disabled = false;
+            updatePlayerInfoDisplay(); // Update for the new player
+            logAction('log_nextTurn', players[currentPlayerIndex].name);
+        }
+
+        // --- Event Listeners ---
+        rollDiceButton.addEventListener('click', rollDice);
+        window.addEventListener('resize', updateAllTokenPositions);
+        languageSelector.addEventListener('click', (event) => {
+            if (event.target.tagName === 'BUTTON') {
+                const lang = event.target.dataset.lang;
+                if (lang && i18n[lang]) {
+                    currentLanguage = lang;
+                    updateUIText(); // This will re-render necessary parts
+                }
+            }
+        });
+
+        // --- Initialize Game ---
+        startGame();
+
+    </script>
+</body>
+</html>
