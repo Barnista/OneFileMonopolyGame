@@ -17,6 +17,14 @@ Made entirely with **HTML** and **JavaScript**, this game is fully playable in a
 
 ---
 
+## Screenshots
+![Alt Text](https://raw.githubusercontent.com/banyapon/OneFileMonopolyGame/refs/heads/main/1.png)
+
+![Alt Text](https://raw.githubusercontent.com/banyapon/OneFileMonopolyGame/refs/heads/main/2.png)
+
+![Alt Text](https://raw.githubusercontent.com/banyapon/OneFileMonopolyGame/refs/heads/main/3.png)
+---
+
 ## 🛠 Features
 
 - 🧩 **One-file game** (HTML + JS only)
@@ -26,6 +34,8 @@ Made entirely with **HTML** and **JavaScript**, this game is fully playable in a
 - 🔁 Fully responsive and playable on desktop or mobile browsers
 
 ---
+
+![Alt Text](https://raw.githubusercontent.com/banyapon/OneFileMonopolyGame/refs/heads/main/4.png)
 
 ## 📦 How to Use
 
