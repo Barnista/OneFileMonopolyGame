@@ -1,41 +1,72 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monopoly Game 4 Player Local</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&family=Noto+Sans+JP:wght@100..900&family=Noto+Sans+SC:wght@100..900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&family=Noto+Sans+JP:wght@100..900&family=Noto+Sans+SC:wght@100..900&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
             font-family: 'Inter', 'Noto Sans Thai', 'Noto Sans JP', 'Noto Sans SC', sans-serif;
-            background-color: #f0f9ff; /* Light blue background */
+            background-color: #f0f9ff;
+            /* Light blue background */
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start; /* Align to top */
+            justify-content: flex-start;
+            /* Align to top */
             min-height: 100vh;
             padding: 1rem;
-            overflow-x: hidden; /* Prevent horizontal scroll on small screens */
+            overflow-x: hidden;
+            /* Prevent horizontal scroll on small screens */
         }
+
         .board-container {
-            display: grid;
-            grid-template-columns: auto repeat(9, auto) auto; /* 11 columns */
-            grid-template-rows: auto repeat(9, auto) auto;    /* 11 rows */
-            width: 90vw; /* Responsive width */
-            max-width: 700px; /* Max width for the board */
-            height: 90vw; /* Responsive height */
-            max-height: 700px; /* Max height for the board */
-            border: 2px solid #0c4a6e; /* Darker blue border */
+            width: 90vw;
+            /* Responsive width */
+            max-width: 700px;
+            /* Max width for the board */
+            height: 90vw;
+            /* Responsive height */
+            max-height: 700px;
+            /* Max height for the board */
+            border: 2px solid #0c4a6e;
+            /* Darker blue border */
             position: relative;
-            background-color: #e0f2fe; /* Lighter blue board background */
+            background-color: #e0f2fe;
+            /* Lighter blue board background */
             border-radius: 0.5rem;
-            margin-top: 1rem; /* Added margin */
+            margin-top: 1rem;
+            /* Added margin */
         }
+
+        #game-board {
+            display: grid;
+            grid-template-columns: auto repeat(9, auto) auto;
+            /* 11 columns */
+            grid-template-rows: auto repeat(9, auto) auto;
+            /* 11 rows */
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        #player-tokens-container {
+            position: absolute;
+            background-color: transparent;
+            width: 100%;
+            height: 100%;
+            border-radius: 0.5rem;
+        }
+
         .cell {
-            border: 1px solid #7dd3fc; /* Light blue cell border */
+            border: 1px solid #7dd3fc;
+            /* Light blue cell border */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -47,19 +78,24 @@
             overflow: hidden;
             background-color: #f8fafc;
         }
+
         .cell .name {
             font-weight: 500;
-            font-size: clamp(0.45rem, 1.3vw, 0.7rem); /* Slightly smaller for more languages */
+            font-size: clamp(0.45rem, 1.3vw, 0.7rem);
+            /* Slightly smaller for more languages */
             word-break: break-word;
             line-height: 1.2;
         }
+
         .cell .price {
             font-size: clamp(0.4rem, 1.2vw, 0.6rem);
             color: #047857;
         }
+
         .corner {
             font-weight: bold;
         }
+
         .property-color {
             height: 10px;
             width: 100%;
@@ -67,6 +103,7 @@
             top: 0;
             left: 0;
         }
+
         .player-token {
             width: clamp(10px, 2.5vw, 20px);
             height: clamp(10px, 2.5vw, 20px);
@@ -82,52 +119,227 @@
             color: white;
             z-index: 10;
         }
-        .player-1 { background-color: #ef4444; }
-        .player-2 { background-color: #3b82f6; }
-        .player-3 { background-color: #10b981; }
-        .player-4 { background-color: #f59e0b; }
+
+        .player-1 {
+            background-color: #ef4444;
+        }
+
+        .player-2 {
+            background-color: #3b82f6;
+        }
+
+        .player-3 {
+            background-color: #10b981;
+        }
+
+        .player-4 {
+            background-color: #f59e0b;
+        }
 
         /* Cell positioning - remains the same */
-        .cell[data-id="0"] { grid-column: 11 / 12; grid-row: 11 / 12; } /* Go */
-        .cell[data-id="1"] { grid-column: 10 / 11; grid-row: 11 / 12; }
-        .cell[data-id="2"] { grid-column: 9 / 10; grid-row: 11 / 12; }
-        .cell[data-id="3"] { grid-column: 8 / 9; grid-row: 11 / 12; }
-        .cell[data-id="4"] { grid-column: 7 / 8; grid-row: 11 / 12; }
-        .cell[data-id="5"] { grid-column: 6 / 7; grid-row: 11 / 12; }
-        .cell[data-id="6"] { grid-column: 5 / 6; grid-row: 11 / 12; }
-        .cell[data-id="7"] { grid-column: 4 / 5; grid-row: 11 / 12; }
-        .cell[data-id="8"] { grid-column: 3 / 4; grid-row: 11 / 12; }
-        .cell[data-id="9"] { grid-column: 2 / 3; grid-row: 11 / 12; }
-        .cell[data-id="10"] { grid-column: 1 / 2; grid-row: 11 / 12; } /* Jail */
-        .cell[data-id="11"] { grid-column: 1 / 2; grid-row: 10 / 11; }
-        .cell[data-id="12"] { grid-column: 1 / 2; grid-row: 9 / 10; }
-        .cell[data-id="13"] { grid-column: 1 / 2; grid-row: 8 / 9; }
-        .cell[data-id="14"] { grid-column: 1 / 2; grid-row: 7 / 8; }
-        .cell[data-id="15"] { grid-column: 1 / 2; grid-row: 6 / 7; }
-        .cell[data-id="16"] { grid-column: 1 / 2; grid-row: 5 / 6; }
-        .cell[data-id="17"] { grid-column: 1 / 2; grid-row: 4 / 5; }
-        .cell[data-id="18"] { grid-column: 1 / 2; grid-row: 3 / 4; }
-        .cell[data-id="19"] { grid-column: 1 / 2; grid-row: 2 / 3; }
-        .cell[data-id="20"] { grid-column: 1 / 2; grid-row: 1 / 2; } /* Free Parking */
-        .cell[data-id="21"] { grid-column: 2 / 3; grid-row: 1 / 2; }
-        .cell[data-id="22"] { grid-column: 3 / 4; grid-row: 1 / 2; }
-        .cell[data-id="23"] { grid-column: 4 / 5; grid-row: 1 / 2; }
-        .cell[data-id="24"] { grid-column: 5 / 6; grid-row: 1 / 2; }
-        .cell[data-id="25"] { grid-column: 6 / 7; grid-row: 1 / 2; }
-        .cell[data-id="26"] { grid-column: 7 / 8; grid-row: 1 / 2; }
-        .cell[data-id="27"] { grid-column: 8 / 9; grid-row: 1 / 2; }
-        .cell[data-id="28"] { grid-column: 9 / 10; grid-row: 1 / 2; }
-        .cell[data-id="29"] { grid-column: 10 / 11; grid-row: 1 / 2; }
-        .cell[data-id="30"] { grid-column: 11 / 12; grid-row: 1 / 2; } /* Go To Jail */
-        .cell[data-id="31"] { grid-column: 11 / 12; grid-row: 2 / 3; }
-        .cell[data-id="32"] { grid-column: 11 / 12; grid-row: 3 / 4; }
-        .cell[data-id="33"] { grid-column: 11 / 12; grid-row: 4 / 5; }
-        .cell[data-id="34"] { grid-column: 11 / 12; grid-row: 5 / 6; }
-        .cell[data-id="35"] { grid-column: 11 / 12; grid-row: 6 / 7; }
-        .cell[data-id="36"] { grid-column: 11 / 12; grid-row: 7 / 8; }
-        .cell[data-id="37"] { grid-column: 11 / 12; grid-row: 8 / 9; }
-        .cell[data-id="38"] { grid-column: 11 / 12; grid-row: 9 / 10; }
-        .cell[data-id="39"] { grid-column: 11 / 12; grid-row: 10 / 11; }
+        .cell[data-id="0"] {
+            grid-column: 11 / 12;
+            grid-row: 11 / 12;
+        }
+
+        /* Go */
+        .cell[data-id="1"] {
+            grid-column: 10 / 11;
+            grid-row: 11 / 12;
+        }
+
+        .cell[data-id="2"] {
+            grid-column: 9 / 10;
+            grid-row: 11 / 12;
+        }
+
+        .cell[data-id="3"] {
+            grid-column: 8 / 9;
+            grid-row: 11 / 12;
+        }
+
+        .cell[data-id="4"] {
+            grid-column: 7 / 8;
+            grid-row: 11 / 12;
+        }
+
+        .cell[data-id="5"] {
+            grid-column: 6 / 7;
+            grid-row: 11 / 12;
+        }
+
+        .cell[data-id="6"] {
+            grid-column: 5 / 6;
+            grid-row: 11 / 12;
+        }
+
+        .cell[data-id="7"] {
+            grid-column: 4 / 5;
+            grid-row: 11 / 12;
+        }
+
+        .cell[data-id="8"] {
+            grid-column: 3 / 4;
+            grid-row: 11 / 12;
+        }
+
+        .cell[data-id="9"] {
+            grid-column: 2 / 3;
+            grid-row: 11 / 12;
+        }
+
+        .cell[data-id="10"] {
+            grid-column: 1 / 2;
+            grid-row: 11 / 12;
+        }
+
+        /* Jail */
+        .cell[data-id="11"] {
+            grid-column: 1 / 2;
+            grid-row: 10 / 11;
+        }
+
+        .cell[data-id="12"] {
+            grid-column: 1 / 2;
+            grid-row: 9 / 10;
+        }
+
+        .cell[data-id="13"] {
+            grid-column: 1 / 2;
+            grid-row: 8 / 9;
+        }
+
+        .cell[data-id="14"] {
+            grid-column: 1 / 2;
+            grid-row: 7 / 8;
+        }
+
+        .cell[data-id="15"] {
+            grid-column: 1 / 2;
+            grid-row: 6 / 7;
+        }
+
+        .cell[data-id="16"] {
+            grid-column: 1 / 2;
+            grid-row: 5 / 6;
+        }
+
+        .cell[data-id="17"] {
+            grid-column: 1 / 2;
+            grid-row: 4 / 5;
+        }
+
+        .cell[data-id="18"] {
+            grid-column: 1 / 2;
+            grid-row: 3 / 4;
+        }
+
+        .cell[data-id="19"] {
+            grid-column: 1 / 2;
+            grid-row: 2 / 3;
+        }
+
+        .cell[data-id="20"] {
+            grid-column: 1 / 2;
+            grid-row: 1 / 2;
+        }
+
+        /* Free Parking */
+        .cell[data-id="21"] {
+            grid-column: 2 / 3;
+            grid-row: 1 / 2;
+        }
+
+        .cell[data-id="22"] {
+            grid-column: 3 / 4;
+            grid-row: 1 / 2;
+        }
+
+        .cell[data-id="23"] {
+            grid-column: 4 / 5;
+            grid-row: 1 / 2;
+        }
+
+        .cell[data-id="24"] {
+            grid-column: 5 / 6;
+            grid-row: 1 / 2;
+        }
+
+        .cell[data-id="25"] {
+            grid-column: 6 / 7;
+            grid-row: 1 / 2;
+        }
+
+        .cell[data-id="26"] {
+            grid-column: 7 / 8;
+            grid-row: 1 / 2;
+        }
+
+        .cell[data-id="27"] {
+            grid-column: 8 / 9;
+            grid-row: 1 / 2;
+        }
+
+        .cell[data-id="28"] {
+            grid-column: 9 / 10;
+            grid-row: 1 / 2;
+        }
+
+        .cell[data-id="29"] {
+            grid-column: 10 / 11;
+            grid-row: 1 / 2;
+        }
+
+        .cell[data-id="30"] {
+            grid-column: 11 / 12;
+            grid-row: 1 / 2;
+        }
+
+        /* Go To Jail */
+        .cell[data-id="31"] {
+            grid-column: 11 / 12;
+            grid-row: 2 / 3;
+        }
+
+        .cell[data-id="32"] {
+            grid-column: 11 / 12;
+            grid-row: 3 / 4;
+        }
+
+        .cell[data-id="33"] {
+            grid-column: 11 / 12;
+            grid-row: 4 / 5;
+        }
+
+        .cell[data-id="34"] {
+            grid-column: 11 / 12;
+            grid-row: 5 / 6;
+        }
+
+        .cell[data-id="35"] {
+            grid-column: 11 / 12;
+            grid-row: 6 / 7;
+        }
+
+        .cell[data-id="36"] {
+            grid-column: 11 / 12;
+            grid-row: 7 / 8;
+        }
+
+        .cell[data-id="37"] {
+            grid-column: 11 / 12;
+            grid-row: 8 / 9;
+        }
+
+        .cell[data-id="38"] {
+            grid-column: 11 / 12;
+            grid-row: 9 / 10;
+        }
+
+        .cell[data-id="39"] {
+            grid-column: 11 / 12;
+            grid-row: 10 / 11;
+        }
 
         .center-area {
             grid-column: 2 / 11;
@@ -140,6 +352,7 @@
             border-radius: 0.25rem;
             padding: 1rem;
         }
+
         .player-info-card {
             background-color: white;
             border-radius: 0.5rem;
@@ -149,9 +362,11 @@
             width: 100%;
             max-width: 600px;
         }
+
         .player-info-card.active {
             border: 2px solid #fbbf24;
         }
+
         .message-box {
             position: fixed;
             top: 50%;
@@ -166,18 +381,21 @@
             min-width: 300px;
             max-width: 90%;
         }
+
         .message-box button {
             margin-top: 1rem;
         }
+
         .overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0, 0, 0, 0.5);
             z-index: 99;
         }
+
         button {
             background-color: #0284c7;
             color: white;
@@ -188,43 +406,63 @@
             cursor: pointer;
             transition: background-color 0.2s;
         }
+
         button:hover {
             background-color: #0369a1;
         }
+
         button:disabled {
             background-color: #9ca3af;
             cursor: not-allowed;
         }
-        .btn-buy { background-color: #16a34a; }
-        .btn-buy:hover { background-color: #15803d; }
-        .btn-pass { background-color: #dc2626; }
-        .btn-pass:hover { background-color: #b91c1c; }
+
+        .btn-buy {
+            background-color: #16a34a;
+        }
+
+        .btn-buy:hover {
+            background-color: #15803d;
+        }
+
+        .btn-pass {
+            background-color: #dc2626;
+        }
+
+        .btn-pass:hover {
+            background-color: #b91c1c;
+        }
+
         .lang-button {
             padding: 0.3rem 0.6rem;
             font-size: 0.8rem;
             margin: 0 0.2rem;
-            background-color: #60a5fa; /* Lighter blue for lang buttons */
+            background-color: #60a5fa;
+            /* Lighter blue for lang buttons */
         }
+
         .lang-button:hover {
             background-color: #3b82f6;
         }
+
         .lang-button.active {
-            background-color: #1d4ed8; /* Darker blue for active lang */
+            background-color: #1d4ed8;
+            /* Darker blue for active lang */
             font-weight: bold;
         }
-
     </style>
 </head>
+
 <body class="bg-sky-100 flex flex-col items-center justify-start p-4 min-h-screen">
 
-    <div id="language-selector" class="mb-4 flex justify-center flex-wrap">
-        <button class="lang-button" data-lang="th">ไทย</button>
-        <button class="lang-button" data-lang="en">English</button>
-        <button class="lang-button" data-lang="jp">日本語</button>
-        <button class="lang-button" data-lang="cn">中文</button>
+    <div class="w-full max-w-3xl flex justify-between items-center mb-4">
+        <h1 id="game-title" class="text-3xl font-bold text-sky-700 text-start flex-grow"></h1>
+        <div id="language-selector" class="flex justify-end flex-wrap">
+            <button class="lang-button" data-lang="th">ไทย</button>
+            <button class="lang-button" data-lang="en">English</button>
+            <button class="lang-button" data-lang="jp">日本語</button>
+            <button class="lang-button" data-lang="cn">中文</button>
+        </div>
     </div>
-
-    <h1 id="game-title" class="text-3xl font-bold text-sky-700 mb-6"></h1>
 
     <div id="game-controls" class="w-full max-w-3xl mb-4 p-4 bg-white rounded-lg shadow-md">
         <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -232,27 +470,57 @@
                 <span id="player-turn-label-static"></span> <span id="current-player-name"></span>
             </div>
             <div class="flex items-center gap-2">
-                <img id="dice1-img" src="https://placehold.co/40x40/cbd5e1/475569?text=?" alt="Dice 1" class="w-10 h-10 border border-slate-300 rounded">
-                <img id="dice2-img" src="https://placehold.co/40x40/cbd5e1/475569?text=?" alt="Dice 2" class="w-10 h-10 border border-slate-300 rounded">
+                <img id="dice1-img" src="https://placehold.co/40x40/cbd5e1/475569?text=?" alt="Dice 1"
+                    class="w-10 h-10 border border-slate-300 rounded">
+                <img id="dice2-img" src="https://placehold.co/40x40/cbd5e1/475569?text=?" alt="Dice 2"
+                    class="w-10 h-10 border border-slate-300 rounded">
             </div>
-            <button id="roll-dice-button" class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-lg shadow transition duration-150 ease-in-out">
+            <button id="roll-dice-button"
+                class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-lg shadow transition duration-150 ease-in-out">
             </button>
         </div>
-        <div id="action-log" class="mt-3 text-sm text-slate-600 h-12 overflow-y-auto border p-2 rounded-md bg-slate-50">
+        <div id="action-log" class="mt-3 text-sm text-slate-600 h-20 overflow-y-auto border p-2 rounded-md bg-slate-50">
         </div>
     </div>
 
     <div id="player-info-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full max-w-5xl mb-4">
     </div>
 
-    <div class="board-container shadow-xl" id="game-board">
-        <div class="center-area">
-            <h2 id="board-logo-text" class="text-2xl font-bold text-sky-800"></h2>
-            <img id="board-logo-image" src="https://placehold.co/100x100/0284c7/ffffff?text=MONOPOLY" alt="" class="my-4 rounded-lg">
+    <div class="board-container shadow-xl">
+        <div id="player-tokens-container"></div>
+        <div id="game-board">
+            <div class="center-area">
+                <h2 id="board-logo-text" class="text-2xl font-bold text-sky-800"></h2>
+                <img id="board-logo-image" src="https://placehold.co/100x100/0284c7/ffffff?text=MONOPOLY" alt=""
+                    class="my-4 rounded-lg">
+            </div>
         </div>
     </div>
 
-    <div id="player-tokens-container" class="absolute"></div>
+    <footer class="w-full text-center mt-5 py-4 bg-sky-200 rounded-lg shadow-md">
+            <div class="flex flex-col sm:flex-row sm:justify-center sm:gap-4">
+                <small>Project Name: 
+                    <a href="https://github.com/banyapon/OneFileMonopolyGame" target="_blank" class="text-blue-500 hover:underline">
+                        OneFileMonopolyGame
+                    </a>
+                </small>
+                <small>Version: 
+                    <a href="https://github.com/Barnista/OneFileMonopolyGame/commits/main/" target="_blank" class="text-blue-500 hover:underline">
+                        <span id="version-number">1.1.0 (stable)</span>
+                    </a> 
+                </small>
+                <small>Contributors: 
+                    <a href="https://github.com/banyapon/OneFileMonopolyGame" target="_blank" class="text-blue-500 hover:underline">
+                        banyapon
+                    </a>
+                    ,&nbsp;
+                    <a href="https://github.com/Barnista/OneFileMonopolyGame" target="_blank" class="text-blue-500 hover:underline">
+                        Barnista
+                    </a>
+                </small>
+            </div>
+    </footer>
+
 
     <div id="message-box-overlay" class="overlay hidden"></div>
     <div id="message-box" class="message-box hidden">
@@ -307,9 +575,9 @@
                 'gameTitle': "เกมเศรษฐีหรรษา", 'rollDiceBtn': "ทอยลูกเต๋า", 'playerTurnLabel': "ตาผู้เล่น:",
                 'moneyLabel': "เงิน:", 'positionLabel': "ตำแหน่ง:", 'propertiesLabel': "ที่ดิน:",
                 'inJailLabel': "อยู่ในคุก", 'turnsLabel': "ตา", 'noPropertiesLabel': "ไม่มี",
-                'buyPropertyTitle': "ซื้อที่ดิน: {0}?", 'buyPropertyText': "ราคา: ฿{0} คุณมี ฿{1}<br>ต้องการซื้อที่ดินนี้หรือไม่?",
+                'buyPropertyTitle': "ซื้อที่ดิน: {0}?", 'buyPropertyText': "ราคา: ฿{1} คุณมี ฿{2}<br>ต้องการซื้อที่ดินนี้หรือไม่?",
                 'buyButton': "ซื้อ", 'passButton': "ไม่ซื้อ", 'confirmEndTurnTitle': "จบตา?",
-                'confirmEndTurnText': "{0} ต้องการจบตาหรือไม่?", 'endTurnButton': "จบตา", 'okButton': "ตกลง",
+                'confirmEndTurnText': "{0} ต้องการจบตาหรือไม่?<br>สาเหตุ:<br>{1}", 'endTurnButton': "จบตา", 'okButton': "ตกลง",
                 'messageTitle': "ข้อความ", 'cardTitle': "การ์ด!", 'cardText': "{0} หยิบการ์ด {1}!<br><em>(ยังไม่พัฒนา)</em>",
                 'goToJailTitle': "เข้าคุก!", 'goToJailText': "{0} ถูกส่งไปเข้าคุก!",
                 'inJailMessageTitle': "อยู่ในคุก", 'inJailMessagePayOrWait': "{0} อยู่ในคุก ทอยได้ {1}, {2}<br>จ่าย ฿50 ออกจากคุก หรือรอตาหน้า?",
@@ -353,9 +621,9 @@
                 'gameTitle': "Monopoly Fun", 'rollDiceBtn': "Roll Dice", 'playerTurnLabel': "Player's Turn:",
                 'moneyLabel': "Money:", 'positionLabel': "Position:", 'propertiesLabel': "Properties:",
                 'inJailLabel': "In Jail", 'turnsLabel': "turns", 'noPropertiesLabel': "None",
-                'buyPropertyTitle': "Buy Property: {0}?", 'buyPropertyText': "Price: ฿{0}. You have ฿{1}.<br>Buy this property?",
+                'buyPropertyTitle': "Buy Property: {0}?", 'buyPropertyText': "Price: ฿{1}. You have ฿{1}.<br>Buy this property?",
                 'buyButton': "Buy", 'passButton': "Pass", 'confirmEndTurnTitle': "End Turn?",
-                'confirmEndTurnText': "{0}, end your turn?", 'endTurnButton': "End Turn", 'okButton': "OK",
+                'confirmEndTurnText': "{0}, end your turn?<br>reason:<br>{1}", 'endTurnButton': "End Turn", 'okButton': "OK",
                 'messageTitle': "Message", 'cardTitle': "Card!", 'cardText': "{0} drew {1} card!<br><em>(Not developed)</em>",
                 'goToJailTitle': "Go to Jail!", 'goToJailText': "{0} is sent to jail!",
                 'inJailMessageTitle': "In Jail", 'inJailMessagePayOrWait': "{0} is in jail. Rolled {1}, {2}.<br>Pay ฿50 or wait?",
@@ -399,9 +667,9 @@
                 'gameTitle': "モノポリーゲーム", 'rollDiceBtn': "サイコロを振る", 'playerTurnLabel': "プレイヤーの番:",
                 'moneyLabel': "所持金:", 'positionLabel': "位置:", 'propertiesLabel': "物件:",
                 'inJailLabel': "刑務所", 'turnsLabel': "ターン", 'noPropertiesLabel': "なし",
-                'buyPropertyTitle': "物件購入: {0}?", 'buyPropertyText': "価格: ฿{0} 所持金: ฿{1}<br>購入しますか？",
+                'buyPropertyTitle': "物件購入: {0}?", 'buyPropertyText': "価格: ฿{1} 所持金: ฿{2}<br>購入しますか？",
                 'buyButton': "購入", 'passButton': "パス", 'confirmEndTurnTitle': "ターン終了?",
-                'confirmEndTurnText': "{0}さん、終了しますか？", 'endTurnButton': "終了", 'okButton': "OK",
+                'confirmEndTurnText': "{0}さん、終了しますか？<br>原因:<br>{1}", 'endTurnButton': "終了", 'okButton': "OK",
                 'messageTitle': "メッセージ", 'cardTitle': "カード！", 'cardText': "{0}が{1}を引いた!<br><em>(未実装)</em>",
                 'goToJailTitle': "刑務所へ！", 'goToJailText': "{0}は刑務所へ！",
                 'inJailMessageTitle': "刑務所", 'inJailMessagePayOrWait': "{0}は刑務所。出目{1},{2}<br>฿50払うか次ターン待つか？",
@@ -416,9 +684,9 @@
                 'gameTitle': "大富翁游戏", 'rollDiceBtn': "掷骰子", 'playerTurnLabel': "玩家回合:",
                 'moneyLabel': "金钱:", 'positionLabel': "位置:", 'propertiesLabel': "地产:",
                 'inJailLabel': "监狱中", 'turnsLabel': "回合", 'noPropertiesLabel': "无",
-                'buyPropertyTitle': "购买地产: {0}?", 'buyPropertyText': "价格: ฿{0} 您有: ฿{1}<br>购买吗？",
+                'buyPropertyTitle': "购买地产: {0}?", 'buyPropertyText': "价格: ฿{1} 您有: ฿{2}<br>购买吗？",
                 'buyButton': "购买", 'passButton': "跳过", 'confirmEndTurnTitle': "结束回合?",
-                'confirmEndTurnText': "{0}, 结束回合吗？", 'endTurnButton': "结束", 'okButton': "确定",
+                'confirmEndTurnText': "{0}, 结束回合吗？<br>原因:<br>{1}", 'endTurnButton': "结束", 'okButton': "确定",
                 'messageTitle': "信息", 'cardTitle': "卡片！", 'cardText': "{0}抽到{1}卡!<br><em>(未开发)</em>",
                 'goToJailTitle': "进监狱！", 'goToJailText': "{0}进监狱了！",
                 'inJailMessageTitle': "监狱中", 'inJailMessagePayOrWait': "{0}在监狱。掷出{1},{2}<br>付฿50出狱或等下回合？",
@@ -449,16 +717,17 @@
         function getRandomDiceValue() { return Math.floor(Math.random() * 6) + 1; }
 
         function logAction(messageKey, ...args) {
-            const translatedMessage = _(messageKey, ...args);
+            const logMessage = _(messageKey, ...args);
             const p = document.createElement('p');
-            p.textContent = translatedMessage;
+            p.textContent = logMessage;
             actionLogElement.appendChild(p);
             actionLogElement.scrollTop = actionLogElement.scrollHeight;
-            console.log(translatedMessage);
+            console.log(logMessage);
+            return logMessage;
         }
 
         function showMessage(titleKey, textKey, buttonsConfig = [{ textKey: "okButton", className: 'bg-sky-500 hover:bg-sky-600', action: hideMessage }], ...textArgs) {
-            messageBoxTitle.textContent = _(titleKey);
+            messageBoxTitle.innerHTML = _(titleKey, ...textArgs);
             messageBoxText.innerHTML = _(textKey, ...textArgs);
             messageBoxButtons.innerHTML = '';
 
@@ -539,7 +808,7 @@
             for (let i = 0; i < 4; i++) {
                 players.push({
                     id: i,
-                    name: _(`player${i+1}Name`), // Translated player name
+                    name: _(`player${i + 1}Name`), // Translated player name
                     money: INITIAL_MONEY,
                     position: 0, inJail: false, jailTurns: 0,
                     properties: [], tokenElement: null, color: PLAYER_COLORS[i]
@@ -570,14 +839,14 @@
                     priceDiv.classList.add('price');
                     priceDiv.textContent = `฿${space.price}`;
                     cell.appendChild(priceDiv);
-                    if(space.colorGroup && space.colorGroup !== 'station' && space.colorGroup !== 'utility') {
+                    if (space.colorGroup && space.colorGroup !== 'station' && space.colorGroup !== 'utility') {
                         const colorBar = document.createElement('div');
                         colorBar.classList.add('property-color');
                         colorBar.style.backgroundColor = getGroupColor(space.colorGroup);
                         cell.appendChild(colorBar);
                     }
                 }
-                 if (space.type === 'go' || space.type === 'jail' || space.type === 'free_parking' || space.type === 'go_to_jail') {
+                if (space.type === 'go' || space.type === 'jail' || space.type === 'free_parking' || space.type === 'go_to_jail') {
                     cell.classList.add('corner');
                     // For corner names that might need line breaks, handle them if necessary in translation or here
                     nameDiv.innerHTML = _(space.nameKey).replace('\\n', '<br>');
@@ -596,8 +865,8 @@
 
                 // Update visual ownership if property is owned
                 if (space.type === 'property' && space.owner !== null && players[space.owner]) {
-                     cell.style.borderColor = players[space.owner].color;
-                     cell.style.borderWidth = '3px';
+                    cell.style.borderColor = players[space.owner].color;
+                    cell.style.borderWidth = '3px';
                 }
             });
             gameBoardElement.insertAdjacentHTML('beforeend', centerAreaHTML);
@@ -607,7 +876,7 @@
         }
 
         function getGroupColor(group) {
-            const colors = {"brown": "#A0522D", "lightblue": "#ADD8E6", "pink": "#FFC0CB", "orange": "#FFA500", "red": "#FF0000", "yellow": "#FFFF00", "green": "#008000", "darkblue": "#00008B"};
+            const colors = { "brown": "#A0522D", "lightblue": "#ADD8E6", "pink": "#FFC0CB", "orange": "#FFA500", "red": "#FF0000", "yellow": "#FFFF00", "green": "#008000", "darkblue": "#00008B" };
             return colors[group] || '#ccc';
         }
 
@@ -678,14 +947,14 @@
             // Update static text elements
             gameTitleElement.textContent = _('gameTitle');
             rollDiceButton.textContent = _('rollDiceBtn');
-             // boardLogoTextElement and boardLogoImageElement will be updated within renderBoard after it's called
+            // boardLogoTextElement and boardLogoImageElement will be updated within renderBoard after it's called
 
 
             // Update player names if they depend on language (already handled in initializePlayers and updatePlayerInfoDisplay)
             // Re-initialize players to get translated names (if game has started, this might reset progress, so be careful)
             // A better way is to update player.name directly if game is ongoing.
             if (players.length > 0) {
-                players.forEach((p,idx) => p.name = _(`player${idx+1}Name`));
+                players.forEach((p, idx) => p.name = _(`player${idx + 1}Name`));
             }
 
 
@@ -695,10 +964,10 @@
             updatePlayerInfoDisplay();
             // Update action log's initial message if it's the only message
             if (actionLogElement.children.length <= 1) { // Check if only initial message or empty
-                 actionLogElement.innerHTML = ''; // Clear if needed
-                 const p = document.createElement('p');
-                 p.textContent = _('initialLogMessage');
-                 actionLogElement.appendChild(p);
+                actionLogElement.innerHTML = ''; // Clear if needed
+                const p = document.createElement('p');
+                p.textContent = _('initialLogMessage');
+                actionLogElement.appendChild(p);
             }
             updateAllTokenPositions(); // Tokens might need repositioning after board re-render
 
@@ -706,7 +975,7 @@
             document.querySelectorAll('#language-selector button').forEach(button => {
                 button.classList.toggle('active', button.dataset.lang === currentLanguage);
             });
-             // Set body font based on language
+            // Set body font based on language
             switch (currentLanguage) {
                 case 'th':
                     document.body.style.fontFamily = "'Noto Sans Thai', 'Inter', sans-serif";
@@ -728,16 +997,16 @@
         function startGame() {
             createBoardSpaces(); // Defines board structure with nameKeys
             initializePlayers(); // Initializes players with translated names
-            
+
             currentPlayerIndex = 0;
             gameActive = true;
             diceRolledThisTurn = false;
-            
+
             updateUIText(); // This will call renderBoard, updatePlayerInfoDisplay, etc.
-            
+
             createPlayerTokens(); // Create tokens after board is rendered
             updateAllTokenPositions(); // Position tokens correctly
-            
+
             rollDiceButton.disabled = false;
             logAction('log_gameStart');
             logAction('log_playerTurn', players[currentPlayerIndex].name);
@@ -783,7 +1052,7 @@
         function handleLandingOnSpace() {
             const player = players[currentPlayerIndex];
             const currentSpace = boardSpaces[player.position];
-            logAction('log_landedOn', player.name, _(currentSpace.nameKey));
+            let logMsg = logAction('log_landedOn', player.name, _(currentSpace.nameKey));
 
             switch (currentSpace.type) {
                 case 'property':
@@ -793,29 +1062,29 @@
                     goToJail(player);
                     break;
                 case 'tax':
-                    payTax(player, currentSpace);
-                    promptEndTurn();
+                    logMsg = payTax(player, currentSpace);
+                    promptEndTurn(logMsg);
                     break;
                 case 'chance':
                 case 'community_chest':
-                    drawCard(player, currentSpace.type);
-                    promptEndTurn();
+                    logMsg = drawCard(player, currentSpace.type);
+                    promptEndTurn(logMsg);
                     break;
                 case 'jail':
-                     logAction(player.inJail ? 'log_inJailTurn' : 'log_landedOnJailVisit', player.name, player.jailTurns +1);
-                    promptEndTurn();
+                    logMsg = logAction(player.inJail ? 'log_inJailTurn' : 'log_landedOnJailVisit', player.name, player.jailTurns + 1);
+                    promptEndTurn(logMsg);
                     break;
                 case 'go':
-                    logAction('log_landedOnGo', player.name);
-                    promptEndTurn();
+                    logMsg = logAction('log_landedOnGo', player.name);
+                    promptEndTurn(logMsg);
                     break;
                 case 'free_parking':
-                    logAction('log_landedOnFreeParking', player.name);
-                    promptEndTurn();
+                    logMsg = logAction('log_landedOnFreeParking', player.name);
+                    promptEndTurn(logMsg);
                     break;
                 default:
-                    logAction('log_noSpecialAction', _(currentSpace.nameKey));
-                    promptEndTurn();
+                    logMsg = logAction('log_noSpecialAction', _(currentSpace.nameKey));
+                    promptEndTurn(logMsg);
                     break;
             }
             updatePlayerInfoDisplay();
@@ -828,39 +1097,42 @@
                     'buyPropertyTitle', 'buyPropertyText',
                     [
                         { textKey: "buyButton", className: 'btn-buy', action: () => buyProperty(player, space) },
-                        { textKey: "passButton", className: 'btn-pass', action: () => {
-                            logAction('log_decidedNotToBuy', player.name, spaceName);
-                            promptEndTurn();
-                        }}
+                        {
+                            textKey: "passButton", className: 'btn-pass', action: () => {
+                                const logMsg = logAction('log_decidedNotToBuy', player.name, spaceName);
+                                promptEndTurn(logMsg);
+                            }
+                        }
                     ],
                     spaceName, space.price, player.money
                 );
             } else if (space.owner !== player.id) {
-                payRent(player, space);
-                promptEndTurn();
+                const logMsg = payRent(player, space);
+                promptEndTurn(logMsg);
             } else {
-                logAction('log_landedOnOwnProperty', player.name, spaceName);
-                promptEndTurn();
+                const logMsg = logAction('log_landedOnOwnProperty', player.name, spaceName);
+                promptEndTurn(logMsg);
             }
         }
 
         function buyProperty(player, space) {
             const spaceName = _(space.nameKey);
+            let logMsg = "";
             if (player.money >= space.price) {
                 player.money -= space.price;
                 space.owner = player.id;
                 player.properties.push(space.id);
-                logAction('log_buyProperty', player.name, spaceName, space.price, player.money);
+                logMsg = logAction('log_buyProperty', player.name, spaceName, space.price, player.money);
                 const cellElement = gameBoardElement.querySelector(`.cell[data-id="${space.id}"]`);
                 if (cellElement) {
                     cellElement.style.borderColor = player.color;
                     cellElement.style.borderWidth = '3px';
                 }
             } else {
-                logAction('log_notEnoughMoneyForTax', player.name, spaceName, space.price, player.money); // Re-use for general not enough money
+                logMsg = logAction('log_notEnoughMoneyForTax', player.name, spaceName, space.price, player.money); // Re-use for general not enough money
             }
             updatePlayerInfoDisplay();
-            promptEndTurn();
+            promptEndTurn(logMsg);
         }
 
         function payRent(player, space) {
@@ -881,30 +1153,35 @@
                 rentAmount = space.rent[0]; // Base rent
             }
 
+            let logMsg = "";
             if (player.money >= rentAmount) {
                 player.money -= rentAmount;
                 owner.money += rentAmount;
-                logAction('log_paidRent', player.name, rentAmount, owner.name, spaceName);
+                logMsg = logAction('log_paidRent', player.name, rentAmount, owner.name, spaceName);
             } else {
-                logAction('log_notEnoughMoneyForRent', player.name, rentAmount, owner.name);
+                logMsg = logAction('log_notEnoughMoneyForRent', player.name, rentAmount, owner.name);
                 owner.money += player.money;
                 player.money = 0;
-                logAction('log_bankrupt', player.name);
+                logMsg = logAction('log_bankrupt', player.name);
             }
             updatePlayerInfoDisplay();
+
+            return logMsg; // Return log message for endTurn prompt
         }
 
         function payTax(player, space) {
             const taxAmount = space.price;
             const spaceName = _(space.nameKey);
+            let logMsg = "";
             if (player.money >= taxAmount) {
                 player.money -= taxAmount;
-                logAction('log_paidTax', player.name, spaceName, taxAmount, player.money);
+                logMsg = logAction('log_paidTax', player.name, spaceName, taxAmount, player.money);
             } else {
-                logAction('log_notEnoughMoneyForTax', player.name, taxAmount);
+                logMsg = logAction('log_notEnoughMoneyForTax', player.name, taxAmount);
                 player.money = 0;
             }
             updatePlayerInfoDisplay();
+            return logMsg; // Return log message for endTurn prompt
         }
 
         function goToJail(player) {
@@ -916,7 +1193,7 @@
             updatePlayerInfoDisplay();
             showMessage("goToJailTitle", "goToJailText", [{ textKey: "okButton", action: endTurn }], player.name);
         }
-        
+
         function handleJailTurn(player, d1, d2) {
             logAction('log_inJailTurn', player.name, player.jailTurns + 1);
             player.jailTurns++;
@@ -935,28 +1212,32 @@
                     rollDiceButton.disabled = true;
                     movePlayer(d1 + d2);
                 } else {
-                    logAction('log_notEnoughMoneyForJailFine', player.name);
-                    promptEndTurn();
+                    const logMsg = logAction('log_notEnoughMoneyForJailFine', player.name);
+                    promptEndTurn(logMsg);
                 }
             } else {
                 logAction('log_stayInJailNoDoubles', player.name);
                 showMessage("inJailMessageTitle", "inJailMessagePayOrWait",
                     [
-                        { textKey: "pay50Button", className: "btn-buy", action: () => {
-                            if (player.money >= 50) {
-                                player.money -= 50; player.inJail = false; player.jailTurns = 0;
-                                logAction('log_paid50OutOfJail', player.name, player.money);
-                                updatePlayerInfoDisplay();
-                                rollDiceButton.disabled = true; movePlayer(d1 + d2);
-                            } else {
-                                logAction('log_notEnoughMoneyForJailFine', player.name);
-                                showMessage("notEnoughMoneyTitle", "notEnoughMoneyToPayJailText", [{textKey: "okButton", action: promptEndTurn}]);
+                        {
+                            textKey: "pay50Button", className: "btn-buy", action: () => {
+                                if (player.money >= 50) {
+                                    player.money -= 50; player.inJail = false; player.jailTurns = 0;
+                                    logAction('log_paid50OutOfJail', player.name, player.money);
+                                    updatePlayerInfoDisplay();
+                                    rollDiceButton.disabled = true; movePlayer(d1 + d2);
+                                } else {
+                                    logAction('log_notEnoughMoneyForJailFine', player.name);
+                                    showMessage("notEnoughMoneyTitle", "notEnoughMoneyToPayJailText", [{ textKey: "okButton", action: promptEndTurn }]);
+                                }
                             }
-                        }},
-                        { textKey: "waitNextTurnButton", className: "btn-pass", action: () => {
-                            logAction('log_choseToWaitInJail', player.name);
-                            promptEndTurn();
-                        }}
+                        },
+                        {
+                            textKey: "waitNextTurnButton", className: "btn-pass", action: () => {
+                                const logMsg = logAction('log_choseToWaitInJail', player.name);
+                                promptEndTurn(logMsg);
+                            }
+                        }
                     ], player.name, d1, d2
                 );
             }
@@ -964,17 +1245,19 @@
 
         function drawCard(player, cardTypeKey) {
             const cardTypeName = _(cardTypeKey === 'chance' ? 'chanceCardName' : 'communityChestCardName');
-            logAction('log_drawCard', player.name, cardTypeName);
-            showMessage("cardTitle", "cardText", [{textKey: "okButton"}], player.name, cardTypeName);
+            let = logMsg = logAction('log_drawCard', player.name, cardTypeName);
+            showMessage("cardTitle", "cardText", [{ textKey: "okButton" }], player.name, cardTypeName);
+            return logMsg; // Return log message for endTurn prompt
         }
 
-        function promptEndTurn() {
+        function promptEndTurn(...args) {
             if (players[currentPlayerIndex].inJail && boardSpaces[players[currentPlayerIndex].position].type === 'go_to_jail') {
                 return;
             }
             showMessage("confirmEndTurnTitle", "confirmEndTurnText",
                 [{ textKey: "endTurnButton", className: 'bg-indigo-500 hover:bg-indigo-600', action: endTurn }],
-                players[currentPlayerIndex].name
+                players[currentPlayerIndex].name,
+                args[0] ?? 'unknown' // Spread args to pass them to the message function
             );
         }
 
@@ -1006,4 +1289,5 @@
 
     </script>
 </body>
+
 </html>
