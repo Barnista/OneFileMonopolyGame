@@ -7,10 +7,13 @@
     <title>Monopoly Game 4 Player Local</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&family=Noto+Sans+JP:wght@100..900&family=Noto+Sans+SC:wght@100..900&family=Inter:wght@400;500;600;700&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&family=Noto+Sans+JP:wght@100..900&family=Noto+Sans+SC:wght@100..900&family=Inter:wght@400;500;600;700&display=swap"
         rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+
+    <!-- DEFAULT GAME SKIN -->
+    <style name="game-skin">
         body {
             font-family: 'Inter', 'Noto Sans Thai', 'Noto Sans JP', 'Noto Sans SC', sans-serif;
             background-color: #f0f9ff;
@@ -450,75 +453,100 @@
             font-weight: bold;
         }
     </style>
+    <!-- You can mod this by loading another style from .css file somewhere else to overwrite it from this code below. -->
+    <link rel="stylesheet" href="./mods/xtreme-mod/skin.css">
 </head>
 
 <body class="bg-sky-100 flex flex-col items-center justify-start p-4 min-h-screen">
 
-    <div class="w-full max-w-3xl flex justify-between items-center mb-4">
-        <h1 id="game-title" class="text-3xl font-bold text-sky-700 text-start flex-grow"></h1>
-        <div id="language-selector" class="flex justify-end flex-wrap">
-            <button class="lang-button" data-lang="th">ไทย</button>
-            <button class="lang-button" data-lang="en">English</button>
-            <button class="lang-button" data-lang="jp">日本語</button>
-            <button class="lang-button" data-lang="cn">中文</button>
-        </div>
-    </div>
-
-    <div id="game-controls" class="w-full max-w-3xl mb-4 p-4 bg-white rounded-lg shadow-md">
-        <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div id="player-turn-display" class="text-xl font-semibold text-sky-700">
-                <span id="player-turn-label-static"></span> <span id="current-player-name"></span>
+    <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-12 xl:col-span-6">
+            <div class="w-full max-w-3xl flex justify-between items-center mb-4">
+                <h1 id="game-title" class="text-3xl font-bold text-sky-700 text-start flex-grow"></h1>
+                <div id="language-selector" class="flex justify-end flex-wrap">
+                    <button class="lang-button" data-lang="th">ไทย</button>
+                    <button class="lang-button" data-lang="en">English</button>
+                    <button class="lang-button" data-lang="jp">日本語</button>
+                    <button class="lang-button" data-lang="cn">中文</button>
+                </div>
             </div>
-            <div class="flex items-center gap-2">
-                <img id="dice1-img" src="https://placehold.co/40x40/cbd5e1/475569?text=?" alt="Dice 1"
-                    class="w-10 h-10 border border-slate-300 rounded">
-                <img id="dice2-img" src="https://placehold.co/40x40/cbd5e1/475569?text=?" alt="Dice 2"
-                    class="w-10 h-10 border border-slate-300 rounded">
+
+            <div id="game-controls" class="w-full max-w-3xl mb-4 p-4 bg-white rounded-lg shadow-md">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div id="player-turn-display" class="text-xl font-semibold text-sky-700">
+                        <span id="player-turn-label-static"></span> <span id="current-player-name"></span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <img id="dice1-img" src="https://placehold.co/40x40/cbd5e1/475569?text=?" alt="Dice 1"
+                            class="w-10 h-10 border border-slate-300 rounded">
+                        <img id="dice2-img" src="https://placehold.co/40x40/cbd5e1/475569?text=?" alt="Dice 2"
+                            class="w-10 h-10 border border-slate-300 rounded">
+                    </div>
+                    <button id="roll-dice-button"
+                        class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-lg shadow transition duration-150 ease-in-out">
+                    </button>
+                </div>
+                <div id="action-log"
+                    class="mt-3 text-sm text-slate-600 h-20 overflow-y-auto border p-2 rounded-md bg-slate-50">
+                </div>
             </div>
-            <button id="roll-dice-button"
-                class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-lg shadow transition duration-150 ease-in-out">
-            </button>
-        </div>
-        <div id="action-log" class="mt-3 text-sm text-slate-600 h-20 overflow-y-auto border p-2 rounded-md bg-slate-50">
-        </div>
-    </div>
 
-    <div id="player-info-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full max-w-5xl mb-4">
-    </div>
-
-    <div class="board-container shadow-xl">
-        <div id="player-tokens-container"></div>
-        <div id="game-board">
-            <div class="center-area">
-                <h2 id="board-logo-text" class="text-2xl font-bold text-sky-800"></h2>
-                <img id="board-logo-image" src="https://placehold.co/100x100/0284c7/ffffff?text=MONOPOLY" alt=""
-                    class="my-4 rounded-lg">
+            <div id="player-info-container"
+                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full max-w-5xl mb-4">
+            </div>
+        </div>
+        <div class="col-span-12 xl:col-span-6">
+            <div class="board-container shadow-xl">
+                <div id="player-tokens-container"></div>
+                <div id="game-board">
+                    <div class="center-area">
+                        <h2 id="board-logo-text" class="text-2xl font-bold text-sky-800"></h2>
+                        <img id="board-logo-image" src="https://placehold.co/100x100/0284c7/ffffff?text=MONOPOLY" alt=""
+                            class="my-4 rounded-lg">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <footer class="w-full text-center mt-5 py-4 bg-sky-200 rounded-lg shadow-md">
-            <div class="flex flex-col sm:flex-row sm:justify-center sm:gap-4">
-                <small>Project Name: 
-                    <a href="https://github.com/banyapon/OneFileMonopolyGame" target="_blank" class="text-blue-500 hover:underline">
-                        OneFileMonopolyGame
-                    </a>
-                </small>
-                <small>Version: 
-                    <a href="https://github.com/Barnista/OneFileMonopolyGame/commits/main/" target="_blank" class="text-blue-500 hover:underline">
-                        <span id="version-number">1.1.0 (stable)</span>
-                    </a> 
-                </small>
-                <small>Contributors: 
-                    <a href="https://github.com/banyapon/OneFileMonopolyGame" target="_blank" class="text-blue-500 hover:underline">
-                        banyapon
-                    </a>
-                    ,&nbsp;
-                    <a href="https://github.com/Barnista/OneFileMonopolyGame" target="_blank" class="text-blue-500 hover:underline">
-                        Barnista
-                    </a>
-                </small>
-            </div>
+        <div class="flex flex-col sm:flex-row sm:justify-center sm:gap-4">
+            <small>Project Name:
+                <a id="project-link" href="https://github.com/Barnista/OneFileMonopolyGame" target="_blank"
+                    class="text-blue-500 hover:underline">
+                    <span id="project-name">OneFileMonopolyGame</span>
+                </a>
+            </small>
+            <small>Version:
+                <a href="https://github.com/Barnista/OneFileMonopolyGame/commits/main/" target="_blank"
+                    class="text-blue-500 hover:underline">
+                    <span id="version-number">1.2.0 (stable, moddable)</span>
+                </a>
+            </small>
+            <small>Mod:
+                <a id="mod-link" href="https://github.com/Barnista/OneFileMonopolyGame" target="_blank"
+                    class="text-blue-500 hover:underline">
+                    <span id="mod-name">Based Game (Vanilla)</span>
+                </a>
+            </small>
+            <small>Mod Version:
+                <a id="mod-version-link" href="https://github.com/Barnista/OneFileMonopolyGame/commits/main/"
+                    target="_blank" class="text-blue-500 hover:underline">
+                    <span id="mod-version-number">1.1.0 (stable)</span>
+                </a>
+            </small>
+            <small>Contributors:
+                <a href="https://github.com/banyapon/OneFileMonopolyGame" target="_blank"
+                    class="text-blue-500 hover:underline">
+                    banyapon
+                </a>
+                ,&nbsp;
+                <a href="https://github.com/Barnista/OneFileMonopolyGame" target="_blank"
+                    class="text-blue-500 hover:underline">
+                    Barnista
+                </a>
+            </small>
+        </div>
     </footer>
 
 
@@ -530,14 +558,75 @@
         </div>
     </div>
 
-    <script>
+    <!-- DEFAULT GAME CONFIG -->
+    <script name="game-config" type="text/javascript">
+        // --- Game Info ---
+        let webTitle = "Monopoly Game 4 Player Local"; // Web title
+        let modName = "Based Game (Vanilla)"; // Project name
+        let modVersionNumber = "1.1.0 (stable)"; // Version number
+        let modVersionLink = "https://github.com/Barnista/OneFileMonopolyGame/commits/main/";
+        let modLink = "https://github.com/Barnista/OneFileMonopolyGame";
+        // Project link (GitHub or other)
+        // If you want to use your own link, please change it here.
+
         // --- Game Configuration ---
-        const BOARD_SIZE = 40;
-        const JAIL_POSITION = 10;
-        const GO_TO_JAIL_POSITION = 30;
-        const PASS_GO_SALARY = 200;
-        const INITIAL_MONEY = 1500;
-        const PLAYER_COLORS = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b'];
+        let DICE_SIDES = 6; // Number of sides on the dice
+        let BOARD_SIZE = 40;
+        let JAIL_POSITION = 10;
+        let GO_TO_JAIL_POSITION = 30;
+        let PASS_GO_SALARY = 200;
+        let INITIAL_MONEY = 1500;
+
+        let DEFAULT_RENT = 25; // Default rent for properties without rent defined
+        let DEFAULT_RENT_SCALE_1 = 4; // Rent scale for properties with rent defined
+        let DEFAULT_RENT_SCALE_2 = 10; // Rent scale for properties with rent defined
+        let DEFAULT_BAIL = 50; // Bail amount for getting out of jail
+
+        let MAX_PLAYERS = 4; // Maximum number of players
+        let PLAYER_COLORS = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b'];
+
+        let BOARD_SPACES = [
+            { id: 0, nameKey: "space_0", type: "go", price: 0, rent: [], colorGroup: null },
+            { id: 1, nameKey: "space_1", type: "property", price: 60, rent: [2, 10, 30, 90, 160, 250], colorGroup: "brown" },
+            { id: 2, nameKey: "space_2", type: "community_chest", price: 0, rent: [], colorGroup: null },
+            { id: 3, nameKey: "space_3", type: "property", price: 60, rent: [4, 20, 60, 180, 320, 450], colorGroup: "brown" },
+            { id: 4, nameKey: "space_4", type: "tax", price: 200, rent: [], colorGroup: null },
+            { id: 5, nameKey: "space_5", type: "property", group: "station", price: 200, rent: [25, 50, 100, 200], colorGroup: "station" },
+            { id: 6, nameKey: "space_6", type: "property", price: 100, rent: [6, 30, 90, 270, 400, 550], colorGroup: "lightblue" },
+            { id: 7, nameKey: "space_7", type: "chance", price: 0, rent: [], colorGroup: null },
+            { id: 8, nameKey: "space_8", type: "property", price: 100, rent: [6, 30, 90, 270, 400, 550], colorGroup: "lightblue" },
+            { id: 9, nameKey: "space_9", type: "property", price: 120, rent: [8, 40, 100, 300, 450, 600], colorGroup: "lightblue" },
+            { id: 10, nameKey: "space_10", type: "jail", price: 0, rent: [], colorGroup: null },
+            { id: 11, nameKey: "space_11", type: "property", price: 140, rent: [10, 50, 150, 450, 625, 750], colorGroup: "pink" },
+            { id: 12, nameKey: "space_12", type: "property", group: "utility", price: 150, rent: [], colorGroup: "utility" },
+            { id: 13, nameKey: "space_13", type: "property", price: 140, rent: [10, 50, 150, 450, 625, 750], colorGroup: "pink" },
+            { id: 14, nameKey: "space_14", type: "property", price: 160, rent: [12, 60, 180, 500, 700, 900], colorGroup: "pink" },
+            { id: 15, nameKey: "space_15", type: "property", group: "station", price: 200, rent: [25, 50, 100, 200], colorGroup: "station" },
+            { id: 16, nameKey: "space_16", type: "property", price: 180, rent: [14, 70, 200, 550, 750, 950], colorGroup: "orange" },
+            { id: 17, nameKey: "space_17", type: "community_chest", price: 0, rent: [], colorGroup: null },
+            { id: 18, nameKey: "space_18", type: "property", price: 180, rent: [14, 70, 200, 550, 750, 950], colorGroup: "orange" },
+            { id: 19, nameKey: "space_19", type: "property", price: 200, rent: [16, 80, 220, 600, 800, 1000], colorGroup: "orange" },
+            { id: 20, nameKey: "space_20", type: "free_parking", price: 0, rent: [], colorGroup: null },
+            { id: 21, nameKey: "space_21", type: "property", price: 220, rent: [18, 90, 250, 700, 875, 1050], colorGroup: "red" },
+            { id: 22, nameKey: "space_22", type: "chance", price: 0, rent: [], colorGroup: null },
+            { id: 23, nameKey: "space_23", type: "property", price: 220, rent: [18, 90, 250, 700, 875, 1050], colorGroup: "red" },
+            { id: 24, nameKey: "space_24", type: "property", price: 240, rent: [20, 100, 300, 750, 925, 1100], colorGroup: "red" },
+            { id: 25, nameKey: "space_25", type: "property", group: "station", price: 200, rent: [25, 50, 100, 200], colorGroup: "station" },
+            { id: 26, nameKey: "space_26", type: "property", price: 260, rent: [22, 110, 330, 800, 975, 1150], colorGroup: "yellow" },
+            { id: 27, nameKey: "space_27", type: "property", price: 260, rent: [22, 110, 330, 800, 975, 1150], colorGroup: "yellow" },
+            { id: 28, nameKey: "space_28", type: "property", group: "utility", price: 150, rent: [], colorGroup: "utility" },
+            { id: 29, nameKey: "space_29", type: "property", price: 280, rent: [24, 120, 360, 850, 1025, 1200], colorGroup: "yellow" },
+            { id: 30, nameKey: "space_30", type: "go_to_jail", price: 0, rent: [], colorGroup: null },
+            { id: 31, nameKey: "space_31", type: "property", price: 300, rent: [26, 130, 390, 900, 1100, 1275], colorGroup: "green" },
+            { id: 32, nameKey: "space_32", type: "property", price: 300, rent: [26, 130, 390, 900, 1100, 1275], colorGroup: "green" },
+            { id: 33, nameKey: "space_33", type: "community_chest", price: 0, rent: [], colorGroup: null },
+            { id: 34, nameKey: "space_34", type: "property", price: 320, rent: [28, 150, 450, 1000, 1200, 1400], colorGroup: "green" },
+            { id: 35, nameKey: "space_35", type: "property", group: "station", price: 200, rent: [25, 50, 100, 200], colorGroup: "station" },
+            { id: 36, nameKey: "space_36", type: "chance", price: 0, rent: [], colorGroup: null },
+            { id: 37, nameKey: "space_37", type: "property", price: 350, rent: [35, 175, 500, 1100, 1300, 1500], colorGroup: "darkblue" },
+            { id: 38, nameKey: "space_38", type: "tax", price: 100, rent: [], colorGroup: null },
+            { id: 39, nameKey: "space_39", type: "property", price: 400, rent: [50, 200, 600, 1400, 1700, 2000], colorGroup: "darkblue" },
+        ]; // Array of board spaces with their properties
 
         // --- Game State ---
         let players = [];
@@ -547,32 +636,14 @@
         let diceRolledThisTurn = false;
         let currentLanguage = 'th'; // Default language
 
-        // --- DOM Elements ---
-        const gameTitleElement = document.getElementById('game-title');
-        const playerTurnLabelStaticElement = document.getElementById('player-turn-label-static');
-        const currentPlayerNameDisplay = document.getElementById('current-player-name');
-        const rollDiceButton = document.getElementById('roll-dice-button');
-        const actionLogElement = document.getElementById('action-log');
-        const gameBoardElement = document.getElementById('game-board');
-        const playerTokensContainer = document.getElementById('player-tokens-container');
-        const dice1Img = document.getElementById('dice1-img');
-        const dice2Img = document.getElementById('dice2-img');
-        const playerInfoContainer = document.getElementById('player-info-container');
-        const messageBoxOverlay = document.getElementById('message-box-overlay');
-        const messageBox = document.getElementById('message-box');
-        const messageBoxTitle = document.getElementById('message-box-title');
-        const messageBoxText = document.getElementById('message-box-text');
-        const messageBoxButtons = document.getElementById('message-box-buttons');
-        const languageSelector = document.getElementById('language-selector');
-        // Changed from const to let to allow reassignment in renderBoard
-        let boardLogoTextElement = document.getElementById('board-logo-text');
-        let boardLogoImageElement = document.getElementById('board-logo-image');
-
-
         // --- Internationalization (i18n) ---
-        const i18n = {
+        let i18n = {
             'th': {
                 'gameTitle': "เกมเศรษฐีหรรษา", 'rollDiceBtn': "ทอยลูกเต๋า", 'playerTurnLabel': "ตาผู้เล่น:",
+                'player1Name': "ผู้เล่น 1",
+                'player2Name': "ผู้เล่น 2",
+                'player3Name': "ผู้เล่น 3",
+                'player4Name': "ผู้เล่น 4",
                 'moneyLabel': "เงิน:", 'positionLabel': "ตำแหน่ง:", 'propertiesLabel': "ที่ดิน:",
                 'inJailLabel': "อยู่ในคุก", 'turnsLabel': "ตา", 'noPropertiesLabel': "ไม่มี",
                 'buyPropertyTitle': "ซื้อที่ดิน: {0}?", 'buyPropertyText': "ราคา: ฿{1} คุณมี ฿{2}<br>ต้องการซื้อที่ดินนี้หรือไม่?",
@@ -580,9 +651,9 @@
                 'confirmEndTurnText': "{0} ต้องการจบตาหรือไม่?<br>สาเหตุ:<br>{1}", 'endTurnButton': "จบตา", 'okButton': "ตกลง",
                 'messageTitle': "ข้อความ", 'cardTitle': "การ์ด!", 'cardText': "{0} หยิบการ์ด {1}!<br><em>(ยังไม่พัฒนา)</em>",
                 'goToJailTitle': "เข้าคุก!", 'goToJailText': "{0} ถูกส่งไปเข้าคุก!",
-                'inJailMessageTitle': "อยู่ในคุก", 'inJailMessagePayOrWait': "{0} อยู่ในคุก ทอยได้ {1}, {2}<br>จ่าย ฿50 ออกจากคุก หรือรอตาหน้า?",
-                'pay50Button': "จ่าย ฿50", 'waitNextTurnButton': "รอตาหน้า", 'notEnoughMoneyTitle': "เงินไม่พอ",
-                'notEnoughMoneyToPayJailText': "เงินไม่พอจ่ายค่าออกจากคุก (฿50)",
+                'inJailMessageTitle': "อยู่ในคุก", 'inJailMessagePayOrWait': `{0} อยู่ในคุก ทอยได้ {1}, {2}<br>จ่าย ฿${DEFAULT_BAIL} ออกจากคุก หรือรอตาหน้า?`,
+                'payBailButton': `จ่าย ฿${DEFAULT_BAIL}`, 'waitNextTurnButton': "รอตาหน้า", 'notEnoughMoneyTitle': "เงินไม่พอ",
+                'notEnoughMoneyToPayJailText': `เงินไม่พอจ่ายค่าออกจากคุก (฿${DEFAULT_BAIL})`,
                 'log_gameStart': "เกมเศรษฐีเริ่มต้นแล้ว!", 'log_playerTurn': "ตาของ {0} กรุณาทอยลูกเต๋า",
                 'log_rolledDice': "{0} ทอยได้ {1} และ {2} (รวม {3})", 'log_movedTo': "{0} เดินจาก {1} ไปยัง {2}",
                 'log_passedGo': "{0} ผ่านจุดเริ่มต้น ได้รับ ฿{1} เงินปัจจุบัน: ฿{2}",
@@ -595,16 +666,15 @@
                 'log_notEnoughMoneyForTax': "{0} เงินไม่พอจ่ายภาษี ฿{1}!",
                 'log_goToJail': "{0} ต้องไปเข้าคุก!", 'log_inJailTurn': "{0} อยู่ในคุก (ตาที่ {1})",
                 'log_rolledDoublesJail': "{0} ทอยเบิ้ล ({1}, {2})! ออกจากคุก",
-                'log_jail3TurnsPay': "{0} อยู่ในคุกครบ 3 ตา ต้องจ่าย ฿50 ออก",
-                'log_paid50OutOfJail': "{0} จ่าย ฿50 ออกจากคุก เหลือ: ฿{1}",
-                'log_notEnoughMoneyForJailFine': "{0} เงินไม่พอจ่ายค่าออกคุก (฿50)",
-                'log_stayInJailNoDoubles': "{0} ทอยไม่เบิ้l ยังอยู่ในคุก จ่าย ฿50 หรือรอ",
+                'log_jail3TurnsPay': `{0} อยู่ในคุกครบ 3 ตา ต้องจ่าย ฿${DEFAULT_BAIL} ออก`,
+                'log_paidBailOutOfJail': `{0} จ่าย ฿${DEFAULT_BAIL} ออกจากคุก เหลือ: ฿{1}`,
+                'log_notEnoughMoneyForJailFine': `{0} เงินไม่พอจ่ายค่าออกคุก (฿${DEFAULT_BAIL})`,
+                'log_stayInJailNoDoubles': `{0} ทอยไม่เบิ้l ยังอยู่ในคุก จ่าย ฿${DEFAULT_BAIL} หรือรอ`,
                 'log_choseToWaitInJail': "{0} เลือกที่จะรอทอยตาหน้า", 'log_drawCard': "{0} หยิบการ์ด {1} (ยังไม่พัฒนา)",
                 'log_landedOnJailVisit': "{0} แค่มาเยี่ยมคุก", 'log_landedOnGo': "{0} อยู่ที่จุดเริ่มต้น",
                 'log_landedOnFreeParking': "{0} จอดรถฟรี", 'log_noSpecialAction': "ไม่มีแอคชั่นพิเศษสำหรับ {0}",
                 'log_endTurn': "จบตาของ {0}", 'log_nextTurn': "--- ตาต่อไป: {0} ---",
                 'chanceCardName': "เสี่ยงโชค", 'communityChestCardName': "หีบสมบัติ",
-                'player1Name': "ผู้เล่น 1", 'player2Name': "ผู้เล่น 2", 'player3Name': "ผู้เล่น 3", 'player4Name': "ผู้เล่น 4",
                 'space_0': "จุดเริ่มต้น", 'space_1': "คลองถม", 'space_2': "หีบสมบัติ", 'space_3': "พาหุรัด",
                 'space_4': "ภาษีเงินได้", 'space_5': "สถานีหัวลำโพง", 'space_6': "เยาวราช", 'space_7': "เสี่ยงโชค",
                 'space_8': "เจริญกรุง", 'space_9': "สีลม", 'space_10': "เข้าคุก/\nเยี่ยมคุก", 'space_11': "สุขุมวิท",
@@ -619,6 +689,10 @@
             },
             'en': {
                 'gameTitle': "Monopoly Fun", 'rollDiceBtn': "Roll Dice", 'playerTurnLabel': "Player's Turn:",
+                'player1Name': "Player 1",
+                'player2Name': "Player 2",
+                'player3Name': "Player 3",
+                'player4Name': "Player 4",
                 'moneyLabel': "Money:", 'positionLabel': "Position:", 'propertiesLabel': "Properties:",
                 'inJailLabel': "In Jail", 'turnsLabel': "turns", 'noPropertiesLabel': "None",
                 'buyPropertyTitle': "Buy Property: {0}?", 'buyPropertyText': "Price: ฿{1}. You have ฿{1}.<br>Buy this property?",
@@ -626,9 +700,9 @@
                 'confirmEndTurnText': "{0}, end your turn?<br>reason:<br>{1}", 'endTurnButton': "End Turn", 'okButton': "OK",
                 'messageTitle': "Message", 'cardTitle': "Card!", 'cardText': "{0} drew {1} card!<br><em>(Not developed)</em>",
                 'goToJailTitle': "Go to Jail!", 'goToJailText': "{0} is sent to jail!",
-                'inJailMessageTitle': "In Jail", 'inJailMessagePayOrWait': "{0} is in jail. Rolled {1}, {2}.<br>Pay ฿50 or wait?",
-                'pay50Button': "Pay ฿50", 'waitNextTurnButton': "Wait Turn", 'notEnoughMoneyTitle': "Not Enough Money",
-                'notEnoughMoneyToPayJailText': "Not enough money for ฿50 jail fine.",
+                'inJailMessageTitle': "In Jail", 'inJailMessagePayOrWait': `{0} is in jail. Rolled {1}, {2}.<br>Pay ฿${DEFAULT_BAIL} or wait?`,
+                'payBailButton': `Pay ฿${DEFAULT_BAIL}`, 'waitNextTurnButton': "Wait Turn", 'notEnoughMoneyTitle': "Not Enough Money",
+                'notEnoughMoneyToPayJailText': `Not enough money for ฿${DEFAULT_BAIL} jail fine.`,
                 'log_gameStart': "Monopoly game started!", 'log_playerTurn': "{0}'s turn. Roll dice.",
                 'log_rolledDice': "{0} rolled {1} & {2} (total {3})", 'log_movedTo': "{0} moved from {1} to {2}",
                 'log_passedGo': "{0} passed GO, got ฿{1}. Now: ฿{2}",
@@ -641,16 +715,15 @@
                 'log_notEnoughMoneyForTax': "{0} can't pay ฿{1} tax!",
                 'log_goToJail': "{0} must go to jail!", 'log_inJailTurn': "{0} in jail (turn {1})",
                 'log_rolledDoublesJail': "{0} rolled doubles ({1}, {2})! Out of jail",
-                'log_jail3TurnsPay': "{0} in jail 3 turns. Must pay ฿50",
-                'log_paid50OutOfJail': "{0} paid ฿50, out of jail. Left: ฿{1}",
-                'log_notEnoughMoneyForJailFine': "{0} can't pay ฿50 jail fine",
-                'log_stayInJailNoDoubles': "{0} no doubles. Stay in jail. Pay ฿50 or wait",
+                'log_jail3TurnsPay': `{0} in jail 3 turns. Must pay ฿${DEFAULT_BAIL}`,
+                'log_paidBailOutOfJail': `{0} paid ฿${DEFAULT_BAIL}, out of jail. Left: ฿{1}`,
+                'log_notEnoughMoneyForJailFine': `{0} can't pay ฿${DEFAULT_BAIL} jail fine`,
+                'log_stayInJailNoDoubles': `{0} no doubles. Stay in jail. Pay ฿${DEFAULT_BAIL} or wait`,
                 'log_choseToWaitInJail': "{0} chose to wait next turn", 'log_drawCard': "{0} drew {1} (Not developed)",
                 'log_landedOnJailVisit': "{0} just visiting jail", 'log_landedOnGo': "{0} is at GO",
                 'log_landedOnFreeParking': "{0} on Free Parking", 'log_noSpecialAction': "No special action for {0}",
                 'log_endTurn': "End of {0}'s turn", 'log_nextTurn': "--- Next turn: {0} ---",
                 'chanceCardName': "Chance", 'communityChestCardName': "Community Chest",
-                'player1Name': "Player 1", 'player2Name': "Player 2", 'player3Name': "Player 3", 'player4Name': "Player 4",
                 'space_0': "Go", 'space_1': "Old Town", 'space_2': "Community Chest", 'space_3': "Textile Market",
                 'space_4': "Income Tax", 'space_5': "Main Station", 'space_6': "Chinatown", 'space_7': "Chance",
                 'space_8': "New Road", 'space_9': "Business District", 'space_10': "Jail/\nVisiting", 'space_11': "Uptown Ave",
@@ -665,6 +738,10 @@
             },
             'jp': { // Mostly placeholders, needs full translation
                 'gameTitle': "モノポリーゲーム", 'rollDiceBtn': "サイコロを振る", 'playerTurnLabel': "プレイヤーの番:",
+                'player1Name': "プレーヤー1",
+                'player2Name': "プレーヤー2",
+                'player3Name': "プレーヤー3",
+                'player4Name': "プレーヤー4",
                 'moneyLabel': "所持金:", 'positionLabel': "位置:", 'propertiesLabel': "物件:",
                 'inJailLabel': "刑務所", 'turnsLabel': "ターン", 'noPropertiesLabel': "なし",
                 'buyPropertyTitle': "物件購入: {0}?", 'buyPropertyText': "価格: ฿{1} 所持金: ฿{2}<br>購入しますか？",
@@ -672,16 +749,19 @@
                 'confirmEndTurnText': "{0}さん、終了しますか？<br>原因:<br>{1}", 'endTurnButton': "終了", 'okButton': "OK",
                 'messageTitle': "メッセージ", 'cardTitle': "カード！", 'cardText': "{0}が{1}を引いた!<br><em>(未実装)</em>",
                 'goToJailTitle': "刑務所へ！", 'goToJailText': "{0}は刑務所へ！",
-                'inJailMessageTitle': "刑務所", 'inJailMessagePayOrWait': "{0}は刑務所。出目{1},{2}<br>฿50払うか次ターン待つか？",
-                'pay50Button': "฿50払う", 'waitNextTurnButton': "待つ", 'notEnoughMoneyTitle': "資金不足",
-                'notEnoughMoneyToPayJailText': "฿50の罰金が払えません。",
+                'inJailMessageTitle': "刑務所", 'inJailMessagePayOrWait': `{0}は刑務所。出目{1},{2}<br>฿${DEFAULT_BAIL}払うか次ターン待つか？`,
+                'payBailButton': `฿${DEFAULT_BAIL}払う`, 'waitNextTurnButton': "待つ", 'notEnoughMoneyTitle': "資金不足",
+                'notEnoughMoneyToPayJailText': `฿${DEFAULT_BAIL}の罰金が払えません。`,
                 'log_gameStart': "ゲーム開始！", 'log_playerTurn': "{0}の番です。",
-                'player1Name': "プレーヤー1", 'player2Name': "プレーヤー2", 'player3Name': "プレーヤー3", 'player4Name': "プレーヤー4",
                 'space_0': "スタート", 'space_1': "古い町", /* ... more translations needed ... */ 'space_39': "首都",
                 'boardLogoText': "モノポリー", 'initialLogMessage': "ゲーム開始！", 'logoAltText': "ゲームロゴ"
             },
             'cn': { // Mostly placeholders, needs full translation
                 'gameTitle': "大富翁游戏", 'rollDiceBtn': "掷骰子", 'playerTurnLabel': "玩家回合:",
+                'player1Name': "玩家1",
+                'player2Name': "玩家2",
+                'player3Name': "玩家3",
+                'player4Name': "玩家4",
                 'moneyLabel': "金钱:", 'positionLabel': "位置:", 'propertiesLabel': "地产:",
                 'inJailLabel': "监狱中", 'turnsLabel': "回合", 'noPropertiesLabel': "无",
                 'buyPropertyTitle': "购买地产: {0}?", 'buyPropertyText': "价格: ฿{1} 您有: ฿{2}<br>购买吗？",
@@ -689,15 +769,51 @@
                 'confirmEndTurnText': "{0}, 结束回合吗？<br>原因:<br>{1}", 'endTurnButton': "结束", 'okButton': "确定",
                 'messageTitle': "信息", 'cardTitle': "卡片！", 'cardText': "{0}抽到{1}卡!<br><em>(未开发)</em>",
                 'goToJailTitle': "进监狱！", 'goToJailText': "{0}进监狱了！",
-                'inJailMessageTitle': "监狱中", 'inJailMessagePayOrWait': "{0}在监狱。掷出{1},{2}<br>付฿50出狱或等下回合？",
-                'pay50Button': "付฿50", 'waitNextTurnButton': "等待", 'notEnoughMoneyTitle': "金钱不足",
-                'notEnoughMoneyToPayJailText': "无法支付฿50出狱费。",
+                'inJailMessageTitle': "监狱中", 'inJailMessagePayOrWait': `{0}在监狱。掷出{1},{2}<br>付฿${DEFAULT_BAIL}出狱或等下回合？`,
+                'payBailButton': `付฿${DEFAULT_BAIL}`, 'waitNextTurnButton': "等待", 'notEnoughMoneyTitle': "金钱不足",
+                'notEnoughMoneyToPayJailText': `无法支付฿${DEFAULT_BAIL}出狱费。`,
                 'log_gameStart': "游戏开始！", 'log_playerTurn': "{0}的回合。",
-                'player1Name': "玩家1", 'player2Name': "玩家2", 'player3Name': "玩家3", 'player4Name': "玩家4",
                 'space_0': "起点", 'space_1': "旧城区", /* ... more translations needed ... */ 'space_39': "首都",
                 'boardLogoText': "大富翁", 'initialLogMessage': "游戏开始！", 'logoAltText': "游戏标志"
             }
         };
+    </script>
+
+    <!-- MODS -->
+    <script src="./mods/xtreme-mod/config.js"></script>
+    <script src="./mods/xtreme-mod/i18n.js"></script>
+
+    <!-- DEFAULT GAME SCRIPT -->
+    <script name="game-script" type="text/javascript">
+        // --- DOM Elements ---
+        let gameTitleElement = document.getElementById('game-title');
+        let playerTurnLabelStaticElement = document.getElementById('player-turn-label-static');
+        let currentPlayerNameDisplay = document.getElementById('current-player-name');
+        let rollDiceButton = document.getElementById('roll-dice-button');
+        let actionLogElement = document.getElementById('action-log');
+        let gameBoardElement = document.getElementById('game-board');
+        let playerTokensContainer = document.getElementById('player-tokens-container');
+        let dice1Img = document.getElementById('dice1-img');
+        let dice2Img = document.getElementById('dice2-img');
+        let playerInfoContainer = document.getElementById('player-info-container');
+        let messageBoxOverlay = document.getElementById('message-box-overlay');
+        let messageBox = document.getElementById('message-box');
+        let messageBoxTitle = document.getElementById('message-box-title');
+        let messageBoxText = document.getElementById('message-box-text');
+        let messageBoxButtons = document.getElementById('message-box-buttons');
+        let languageSelector = document.getElementById('language-selector');
+        let boardLogoTextElement = document.getElementById('board-logo-text');
+        let boardLogoImageElement = document.getElementById('board-logo-image');
+        let modNameElement = document.getElementById('mod-name');
+        let modLinkElement = document.getElementById('mod-link');
+        let modVersionNumberElement = document.getElementById('mod-version-number');
+        let modVersionLinkElement = document.getElementById('mod-version-link');
+
+        document.title = webTitle; // Set the document title
+        modNameElement.textContent = modName;
+        modLinkElement.href = modLink;
+        modVersionNumberElement.textContent = modVersionNumber;
+        modVersionLinkElement.href = modVersionLink;
 
         // Helper function for string formatting
         function formatString(str, ...args) {
@@ -714,7 +830,7 @@
         }
 
         // --- Utility Functions ---
-        function getRandomDiceValue() { return Math.floor(Math.random() * 6) + 1; }
+        function getRandomDiceValue() { return Math.floor(Math.random() * DICE_SIDES) + 1; }
 
         function logAction(messageKey, ...args) {
             const logMessage = _(messageKey, ...args);
@@ -753,48 +869,7 @@
 
         // --- Board Definition ---
         function createBoardSpaces() {
-            boardSpaces = [
-                { id: 0, nameKey: "space_0", type: "go", price: 0, rent: [], colorGroup: null },
-                { id: 1, nameKey: "space_1", type: "property", price: 60, rent: [2, 10, 30, 90, 160, 250], colorGroup: "brown" },
-                { id: 2, nameKey: "space_2", type: "community_chest", price: 0, rent: [], colorGroup: null },
-                { id: 3, nameKey: "space_3", type: "property", price: 60, rent: [4, 20, 60, 180, 320, 450], colorGroup: "brown" },
-                { id: 4, nameKey: "space_4", type: "tax", price: 200, rent: [], colorGroup: null },
-                { id: 5, nameKey: "space_5", type: "property", group: "station", price: 200, rent: [25, 50, 100, 200], colorGroup: "station" },
-                { id: 6, nameKey: "space_6", type: "property", price: 100, rent: [6, 30, 90, 270, 400, 550], colorGroup: "lightblue" },
-                { id: 7, nameKey: "space_7", type: "chance", price: 0, rent: [], colorGroup: null },
-                { id: 8, nameKey: "space_8", type: "property", price: 100, rent: [6, 30, 90, 270, 400, 550], colorGroup: "lightblue" },
-                { id: 9, nameKey: "space_9", type: "property", price: 120, rent: [8, 40, 100, 300, 450, 600], colorGroup: "lightblue" },
-                { id: 10, nameKey: "space_10", type: "jail", price: 0, rent: [], colorGroup: null },
-                { id: 11, nameKey: "space_11", type: "property", price: 140, rent: [10, 50, 150, 450, 625, 750], colorGroup: "pink" },
-                { id: 12, nameKey: "space_12", type: "property", group: "utility", price: 150, rent: [], colorGroup: "utility" },
-                { id: 13, nameKey: "space_13", type: "property", price: 140, rent: [10, 50, 150, 450, 625, 750], colorGroup: "pink" },
-                { id: 14, nameKey: "space_14", type: "property", price: 160, rent: [12, 60, 180, 500, 700, 900], colorGroup: "pink" },
-                { id: 15, nameKey: "space_15", type: "property", group: "station", price: 200, rent: [25, 50, 100, 200], colorGroup: "station" },
-                { id: 16, nameKey: "space_16", type: "property", price: 180, rent: [14, 70, 200, 550, 750, 950], colorGroup: "orange" },
-                { id: 17, nameKey: "space_17", type: "community_chest", price: 0, rent: [], colorGroup: null },
-                { id: 18, nameKey: "space_18", type: "property", price: 180, rent: [14, 70, 200, 550, 750, 950], colorGroup: "orange" },
-                { id: 19, nameKey: "space_19", type: "property", price: 200, rent: [16, 80, 220, 600, 800, 1000], colorGroup: "orange" },
-                { id: 20, nameKey: "space_20", type: "free_parking", price: 0, rent: [], colorGroup: null },
-                { id: 21, nameKey: "space_21", type: "property", price: 220, rent: [18, 90, 250, 700, 875, 1050], colorGroup: "red" },
-                { id: 22, nameKey: "space_22", type: "chance", price: 0, rent: [], colorGroup: null },
-                { id: 23, nameKey: "space_23", type: "property", price: 220, rent: [18, 90, 250, 700, 875, 1050], colorGroup: "red" },
-                { id: 24, nameKey: "space_24", type: "property", price: 240, rent: [20, 100, 300, 750, 925, 1100], colorGroup: "red" },
-                { id: 25, nameKey: "space_25", type: "property", group: "station", price: 200, rent: [25, 50, 100, 200], colorGroup: "station" },
-                { id: 26, nameKey: "space_26", type: "property", price: 260, rent: [22, 110, 330, 800, 975, 1150], colorGroup: "yellow" },
-                { id: 27, nameKey: "space_27", type: "property", price: 260, rent: [22, 110, 330, 800, 975, 1150], colorGroup: "yellow" },
-                { id: 28, nameKey: "space_28", type: "property", group: "utility", price: 150, rent: [], colorGroup: "utility" },
-                { id: 29, nameKey: "space_29", type: "property", price: 280, rent: [24, 120, 360, 850, 1025, 1200], colorGroup: "yellow" },
-                { id: 30, nameKey: "space_30", type: "go_to_jail", price: 0, rent: [], colorGroup: null },
-                { id: 31, nameKey: "space_31", type: "property", price: 300, rent: [26, 130, 390, 900, 1100, 1275], colorGroup: "green" },
-                { id: 32, nameKey: "space_32", type: "property", price: 300, rent: [26, 130, 390, 900, 1100, 1275], colorGroup: "green" },
-                { id: 33, nameKey: "space_33", type: "community_chest", price: 0, rent: [], colorGroup: null },
-                { id: 34, nameKey: "space_34", type: "property", price: 320, rent: [28, 150, 450, 1000, 1200, 1400], colorGroup: "green" },
-                { id: 35, nameKey: "space_35", type: "property", group: "station", price: 200, rent: [25, 50, 100, 200], colorGroup: "station" },
-                { id: 36, nameKey: "space_36", type: "chance", price: 0, rent: [], colorGroup: null },
-                { id: 37, nameKey: "space_37", type: "property", price: 350, rent: [35, 175, 500, 1100, 1300, 1500], colorGroup: "darkblue" },
-                { id: 38, nameKey: "space_38", type: "tax", price: 100, rent: [], colorGroup: null },
-                { id: 39, nameKey: "space_39", type: "property", price: 400, rent: [50, 200, 600, 1400, 1700, 2000], colorGroup: "darkblue" },
-            ];
+            boardSpaces = BOARD_SPACES;
             boardSpaces.forEach(space => {
                 if (space.type === 'property') {
                     space.owner = null; space.houses = 0;
@@ -805,13 +880,13 @@
         // --- Player Initialization ---
         function initializePlayers() {
             players = []; // Clear previous players if any (for restart scenario)
-            for (let i = 0; i < 4; i++) {
+            for (let i = 0; i < MAX_PLAYERS; i++) {
                 players.push({
                     id: i,
                     name: _(`player${i + 1}Name`), // Translated player name
                     money: INITIAL_MONEY,
                     position: 0, inJail: false, jailTurns: 0,
-                    properties: [], tokenElement: null, color: PLAYER_COLORS[i]
+                    properties: [], tokenElement: null, color: PLAYER_COLORS[i] || '#000000' // Default to black if index is out of bounds
                 });
             }
         }
@@ -1141,14 +1216,14 @@
             let rentAmount = 0;
             if (space.group === "station") {
                 const stationsOwned = owner.properties.filter(pId => boardSpaces[pId].group === "station").length;
-                rentAmount = space.rent[stationsOwned - 1] || 25;
+                rentAmount = space.rent[stationsOwned - 1] || DEFAULT_RENT; // Default rent if not found
             } else if (space.group === "utility") {
                 const utilitiesOwned = owner.properties.filter(pId => boardSpaces[pId].group === "utility").length;
                 // Ensure dice images have been updated for current roll
                 const d1Val = parseInt(dice1Img.src.split('text=')[1]) || 1;
                 const d2Val = parseInt(dice2Img.src.split('text=')[1]) || 1;
                 const lastRoll = d1Val + d2Val;
-                rentAmount = utilitiesOwned === 1 ? lastRoll * 4 : lastRoll * 10;
+                rentAmount = utilitiesOwned === 1 ? lastRoll * DEFAULT_RENT_SCALE_1 : lastRoll * DEFAULT_RENT_SCALE_2;
             } else {
                 rentAmount = space.rent[0]; // Base rent
             }
@@ -1205,9 +1280,9 @@
                 movePlayer(d1 + d2);
             } else if (player.jailTurns >= 3) {
                 logAction('log_jail3TurnsPay', player.name);
-                if (player.money >= 50) {
-                    player.money -= 50; player.inJail = false; player.jailTurns = 0;
-                    logAction('log_paid50OutOfJail', player.name, player.money);
+                if (player.money >= DEFAULT_BAIL) {
+                    player.money -= DEFAULT_BAIL; player.inJail = false; player.jailTurns = 0;
+                    logAction('log_paidBailOutOfJail', player.name, player.money);
                     updatePlayerInfoDisplay();
                     rollDiceButton.disabled = true;
                     movePlayer(d1 + d2);
@@ -1220,10 +1295,10 @@
                 showMessage("inJailMessageTitle", "inJailMessagePayOrWait",
                     [
                         {
-                            textKey: "pay50Button", className: "btn-buy", action: () => {
-                                if (player.money >= 50) {
-                                    player.money -= 50; player.inJail = false; player.jailTurns = 0;
-                                    logAction('log_paid50OutOfJail', player.name, player.money);
+                            textKey: "payBailButton", className: "btn-buy", action: () => {
+                                if (player.money >= DEFAULT_BAIL) {
+                                    player.money -= DEFAULT_BAIL; player.inJail = false; player.jailTurns = 0;
+                                    logAction('log_paidBailOutOfJail', player.name, player.money);
                                     updatePlayerInfoDisplay();
                                     rollDiceButton.disabled = true; movePlayer(d1 + d2);
                                 } else {
