@@ -1,7 +1,7 @@
 // --- Internationalization (i18n) ---
 i18n = {
     'th': {
-        'gameTitle': "เกมเศรษฐีหรรษา", 'rollDiceBtn': "ทอยลูกเต๋า", 'playerTurnLabel': "ตาผู้เล่น:",
+        'gameTitle': "เกมเศรษฐีหรรษา [Xtreme]", 'rollDiceBtn': "ทอยลูกเต๋า", 'playerTurnLabel': "ตาผู้เล่น:",
         'player1Name': "ShadowByte (P1)",
         'player2Name': "PixelPhantom (P2)",
         'player3Name': "GlitchVortex (P3)",
@@ -54,7 +54,7 @@ i18n = {
         'boardLogoText': "เกมเศรษฐี", 'initialLogMessage': "เริ่มเกม!", 'logoAltText': "โลโก้เกม"
     },
     'en': {
-        'gameTitle': "Monopoly Fun", 'rollDiceBtn': "Roll Dice", 'playerTurnLabel': "Player's Turn:",
+        'gameTitle': "Monopoly Fun [Xtreme]", 'rollDiceBtn': "Roll Dice", 'playerTurnLabel': "Player's Turn:",
         'player1Name': "ShadowByte (P1)",
         'player2Name': "PixelPhantom (P2)",
         'player3Name': "GlitchVortex (P3)",
@@ -107,7 +107,7 @@ i18n = {
         'boardLogoText': "Monopoly", 'initialLogMessage': "Game Started!", 'logoAltText': "Game Logo"
     },
     'jp': { // Mostly placeholders, needs full translation
-        'gameTitle': "モノポリーゲーム", 'rollDiceBtn': "サイコロを振る", 'playerTurnLabel': "プレイヤーの番:",
+        'gameTitle': "モノポリーゲーム [Xtreme]", 'rollDiceBtn': "サイコロを振る", 'playerTurnLabel': "プレイヤーの番:",
         'player1Name': "ShadowByte (P1)",
         'player2Name': "PixelPhantom (P2)",
         'player3Name': "GlitchVortex (P3)",
@@ -131,7 +131,7 @@ i18n = {
         'boardLogoText': "モノポリー", 'initialLogMessage': "ゲーム開始！", 'logoAltText': "ゲームロゴ"
     },
     'cn': { // Mostly placeholders, needs full translation
-        'gameTitle': "大富翁游戏", 'rollDiceBtn': "掷骰子", 'playerTurnLabel': "玩家回合:",
+        'gameTitle': "大富翁游戏 [Xtreme]", 'rollDiceBtn': "掷骰子", 'playerTurnLabel': "玩家回合:",
         'player1Name': "ShadowByte (P1)",
         'player2Name': "PixelPhantom (P2)",
         'player3Name': "GlitchVortex (P3)",

@@ -8,7 +8,7 @@
 // --- Game Info ---
 webTitle = "Monopoly Game - Xtreme 8 Players"; // Web title
 modName = "Xtreme-Mod"; // Project name
-modVersionNumber = "1.0.0"; // Version number
+modVersionNumber = "1.0.1"; // Version number
 modVersionLink = "https://github.com/Barnista/OneFileMonopolyGame/commits/main/";
 modLink = "https://github.com/Barnista/OneFileMonopolyGame";// Project link (GitHub or other)
 // If you want to use your own link, please change it here.
