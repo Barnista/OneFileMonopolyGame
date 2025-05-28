@@ -8,7 +8,7 @@
 // --- Game Info ---
 webTitle = "Monopoly Game - Xtreme 8 Players"; // Web title
 modName = "Xtreme-Mod"; // Project name
-modVersionNumber = "1.0.1"; // Version number
+modVersionNumber = "1.1.0"; // Version number
 modVersionLink = "https://github.com/Barnista/OneFileMonopolyGame/commits/main/";
 modLink = "https://github.com/Barnista/OneFileMonopolyGame";// Project link (GitHub or other)
 // If you want to use your own link, please change it here.
@@ -73,6 +73,15 @@ BOARD_SPACES = [
     { id: 39, nameKey: "space_39", type: "property", price: 40000, rent: [5000, 20000, 60000, 140000, 170000, 200000], colorGroup: "darkblue" },
 ];
 // Board spaces configuration. Each space has an ID, name key for localization, type, price, rent structure, and color group.
+
+CHANCE_CARDS = [
+    { id: 1, nameKey: "chance_card_1", textKey: "chance_text_1", action: "money", value: 10000 }, // Collect $100
+    { id: 2, nameKey: "chance_card_2", textKey: "chance_text_2", action: "move", value: 3 }, // Move forward 3 spaces
+    { id: 3, nameKey: "chance_card_3", textKey: "chance_text_3", action: "jail" }, // Go to jail
+    { id: 4, nameKey: "chance_card_4", textKey: "chance_text_4", action: "move", value: -2 }, // Move back 2 spaces
+    { id: 5, nameKey: "chance_card_5", textKey: "chance_text_5", action: "money", value: 5000 }, // Pay $100
+    { id: 6, nameKey: "chance_card_6", textKey: "chance_text_6", action: "none" },
+];
 
 // --- Game State ---
 players = [];   // Will store player objects with 'id', 'name', 'money', 'position', 'properties', 'inJail', 'jailTurns'
